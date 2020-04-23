@@ -51,6 +51,13 @@ td.subject {
 	white-space: pre-wrap;
 	font-family: monospace;
 }
+
+iframe {
+	border: none;
+	width: 100%;
+	/* if initial iframe is taller than its content, it won't shrink, hence 5px */
+	height: 5px;
+}
 </style>
 <body><div id="vue">
 	<div v-show="!thread">
@@ -79,6 +86,12 @@ Vue.component('message', {
 			return this.content_type == 'text/html'
 		},
 	},
+	methods: {
+		resize: function() {
+			let c = this.$refs.content;
+			c.style.height = c.contentWindow.document.documentElement.scrollHeight + 'px';
+		}
+	},
 	template: `
 		<div class="message">
 			<div class="meta">
@@ -101,7 +114,7 @@ Vue.component('message', {
 					BCC: {{bcc}}
 				</template>
 			</div>
-			<div v-if="isHTML" class="content" v-html="content"></div>
+			<iframe v-if="isHTML" class="content" @load="resize" ref="content" sandbox='allow-same-origin' :srcdoc="content"></iframe>
 			<div v-else class="content plain">{{content}}</div>
 			<br>
 			<!-- TODO attachments -->
