@@ -30,15 +30,61 @@ ALLOWED_TAGS = [
     "p",
     "br",
     "div",
+
+    'table',
+    'thead',
+    'tbody',
+    'tr',
+    'td',
+    'th',
+
+    'img',
+
+    'style',
 ]
 ALLOWED_ATTRIBUTES = {
+    '*': ['style', 'class', 'id', 'title'],
+
     "a": ["href", "title", "style"],
     "abbr": ["title", "style"],
     "acronym": ["title", "style"],
     "p": ["style"],
     "div": ["style"],
-}
 
+    'table': 'cellpadding cellspacing width border'.split(),
+    'td': ['valign', 'bgcolor'],
+    'th': ['valign'],
+}
+ALLOWED_STYLES = [
+    'border',
+    'border-collapse',
+    'border-radius',
+
+    'color',
+    'background-color',
+
+    'font-family',
+    'font-size',
+    'font-weight',
+
+    'text-align',
+    'vertical-align',
+
+    'text-decoration',
+    'line-height',
+
+    'margin',
+    'padding',
+
+    'width',
+    'height',
+    'min-width',
+    'min-height',
+    'max-width',
+    'max-height',
+
+    'display',
+]
 
 def get_db():
     """Get a new `Database` instance. Called before every request. Cached on first call."""
@@ -170,6 +216,7 @@ def message_to_json(message):
             msg_body.get_content(),
             tags=ALLOWED_TAGS,
             attributes=ALLOWED_ATTRIBUTES,
+            styles=ALLOWED_STYLES,
             strip=True,
         )
     else:
