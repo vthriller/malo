@@ -25,11 +25,30 @@ td {
 td.subject {
 	min-width: 60%;
 }
+
+.message {
+	border-top: 1px dashed #aaa;
+	margin-top: 1em;
+	padding-top: .3ex;
+}
+
+.message .meta {
+	margin-bottom: 1ex;
+}
+
+.message .subject {
+	font-size: large;
+	font-weight: bold;
+}
+.message .date {
+	float: right;
+}
 </style>
 <body><div id="vue">
+	<div v-show="!thread">
 	<input v-model="query" ref="query" @keyup.enter="search">
 	<table>
-		<tr v-for="res in results" :key="res.thread_id">
+		<tr v-for="res in results" :key="res.thread_id" @click="fetch_thread(res.thread_id)">
 			<td>{{ res.authors }}</td>
 			<td class="subject">{{ res.subject }}</td>
 			<td>{{ res.tags }}</td>
@@ -37,14 +56,52 @@ td.subject {
 			<td>{{ res.oldest_date }} – {{ res.newest_date }}</td>
 		</tr>
 	</table>
+	</div>
+
+	<template v-if="thread">
+		<message v-for="m in thread" v-bind="m"></message>
+	</template>
 </div></body>
 <script src="vue-2.6.11.js"></script>
 <script>
+Vue.component('message', {
+	props: 'date subject from to cc bcc content_type content attachments message_id'.split(' '),
+	template: `
+		<div class="message">
+			<div class="meta">
+				<span class="date">{{date}}</span>
+				<span class="subject">{{subject}}</span>
+				<template v-if="from">
+					<br>
+					From: {{from}}
+				</template>
+				<template v-if="to">
+					<br>
+					To: {{to}}
+				</template>
+				<template v-if="cc">
+					<br>
+					CC: {{cc}}
+				</template>
+				<template v-if="bcc">
+					<br>
+					BCC: {{bcc}}
+				</template>
+			</div>
+			<!-- TODO? {{content_type}} -->
+			<div class="content" v-html="content"></div>
+			<br>
+			<!-- TODO attachments -->
+		</div>
+	`,
+});
+
 var app = new Vue({
 	el: '#vue',
 	data: {
 		query: '',
 		results: [],
+		thread: null,
 	},
 	mounted: function() {
 		Vue.nextTick(() => {
@@ -62,6 +119,18 @@ var app = new Vue({
 			.then((resp) => resp.json())
 			.then(function(data) {
 				self.results = data;
+			});
+		},
+		fetch_thread: function(id) {
+			let self = this;
+			fetch('/api/thread/' + encodeURIComponent(id))
+			.catch(function(err) {
+				console.error(err);
+				// TODO
+			})
+			.then((resp) => resp.json())
+			.then(function(data) {
+				self.thread = data;
 			});
 
 		}
