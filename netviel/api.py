@@ -45,11 +45,7 @@ ALLOWED_TAGS = [
 ALLOWED_ATTRIBUTES = {
     '*': ['style', 'class', 'id', 'title'],
 
-    "a": ["href", "title", "style"],
-    "abbr": ["title", "style"],
-    "acronym": ["title", "style"],
-    "p": ["style"],
-    "div": ["style"],
+    "a": ["href"],
 
     'table': 'cellpadding cellspacing width border'.split(),
     'td': ['valign', 'bgcolor'],
