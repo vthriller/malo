@@ -27,7 +27,7 @@ td.subject {
 }
 </style>
 <body><div id="vue">
-	<input v-model="query" @keyup.enter="search">
+	<input v-model="query" ref="query" @keyup.enter="search">
 	<table>
 		<tr v-for="res in results" :key="res.thread_id">
 			<td>{{ res.authors }}</td>
@@ -45,6 +45,11 @@ var app = new Vue({
 	data: {
 		query: '',
 		results: [],
+	},
+	mounted: function() {
+		Vue.nextTick(() => {
+			this.$refs.query.focus();
+		});
 	},
 	methods: {
 		search: function() {
