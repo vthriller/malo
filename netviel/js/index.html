@@ -1,11 +1,37 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<style>
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-size: 11pt;
+}
+
+input {
+	width: 100%;
+}
+
+table {
+	border-collapse: collapse;
+}
+tr:nth-child(2n+1) {
+	background-color: #eee;
+}
+td {
+	vertical-align: top;
+}
+td.subject {
+	min-width: 60%;
+}
+</style>
 <body><div id="vue">
 	<input v-model="query" @keyup.enter="search">
 	<table>
 		<tr v-for="res in results" :key="res.thread_id">
 			<td>{{ res.authors }}</td>
-			<td>{{ res.subject }}</td>
+			<td class="subject">{{ res.subject }}</td>
 			<td>{{ res.tags }}</td>
 			<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
 			<td>{{ res.oldest_date }} – {{ res.newest_date }}</td>
