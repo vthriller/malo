@@ -9,7 +9,7 @@ import os
 
 import bleach
 import notmuch
-from flask import Flask, current_app, g, send_file, send_from_directory
+from flask import Flask, current_app, g, send_file, send_from_directory, request
 from flask_cors import CORS
 from flask_restful import Api, Resource
 
@@ -122,7 +122,8 @@ def create_app():
     app.teardown_appcontext(close_db)
 
     class Query(Resource):
-        def get(self, query_string):
+        def get(self):
+            query_string = request.args['q']
             threads = notmuch.Query(get_db(), query_string).search_threads()
             return threads_to_json(threads, number=None)
 
@@ -135,7 +136,7 @@ def create_app():
             messages = thread.get_messages()
             return messages_to_json(messages)
 
-    api.add_resource(Query, "/api/query/<string:query_string>")
+    api.add_resource(Query, "/api/query")
     api.add_resource(Thread, "/api/thread/<string:thread_id>")
 
     @app.route("/api/attachment/<string:message_id>/<int:num>")
