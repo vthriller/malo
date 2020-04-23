@@ -43,6 +43,11 @@ td.subject {
 .message .date {
 	float: right;
 }
+
+.message .content.plain {
+	white-space: pre-wrap;
+	font-family: monospace;
+}
 </style>
 <body><div id="vue">
 	<div v-show="!thread">
@@ -66,6 +71,11 @@ td.subject {
 <script>
 Vue.component('message', {
 	props: 'date subject from to cc bcc content_type content attachments message_id'.split(' '),
+	computed: {
+		isHTML: function() {
+			return this.content_type == 'text/html'
+		},
+	},
 	template: `
 		<div class="message">
 			<div class="meta">
@@ -88,8 +98,8 @@ Vue.component('message', {
 					BCC: {{bcc}}
 				</template>
 			</div>
-			<!-- TODO? {{content_type}} -->
-			<div class="content" v-html="content"></div>
+			<div v-if="isHTML" class="content" v-html="content"></div>
+			<div v-else class="content plain">{{content}}</div>
 			<br>
 			<!-- TODO attachments -->
 		</div>
