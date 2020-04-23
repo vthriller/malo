@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body><div id="vue">
+	<input v-model="query" @keyup.enter="search">
+	<table>
+		<tr v-for="res in results" :key="res.thread_id">
+			<td>{{ res.authors }}</td>
+			<td>{{ res.subject }}</td>
+			<td>{{ res.tags }}</td>
+			<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
+			<td>{{ res.oldest_date }} – {{ res.newest_date }}</td>
+		</tr>
+	</table>
+</div></body>
+<script src="vue-2.6.11.js"></script>
+<script>
+var app = new Vue({
+	el: '#vue',
+	data: {
+		query: '',
+		results: [],
+	},
+	methods: {
+		search: function() {
+			let self = this;
+			fetch('/api/query/' + encodeURIComponent(this.query))
+			.catch(function(err) {
+				console.error(err);
+				// TODO
+			})
+			.then((resp) => resp.json())
+			.then(function(data) {
+				self.results = data;
+			});
+
+		}
+	},
+})
+</script>
