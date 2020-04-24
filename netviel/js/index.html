@@ -153,6 +153,9 @@ var app = new Vue({
 	},
 	methods: {
 		search: function() {
+			// back to search result view
+			this.thread = null;
+
 			let self = this;
 			fetch('/api/query?q=' + encodeURIComponent(this.query))
 			.catch(function(err) {
