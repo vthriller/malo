@@ -55,8 +55,10 @@ td.subject {
 	font-size: large;
 	font-weight: bold;
 }
-.message .date {
+.message .date,
+.message .raw {
 	float: right;
+	clear: right;
 }
 
 .message .content.plain {
@@ -113,6 +115,7 @@ Vue.component('message', {
 		<div class="message">
 			<div class="meta">
 				<span class="date">{{date}}</span>
+				<span class="raw"><a :href="\`/api/message/\${message_id}\`">raw</a></span>
 				<span class="subject">{{subject}}</span>
 				<template v-if="from">
 					<br>
