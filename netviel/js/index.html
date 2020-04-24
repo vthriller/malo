@@ -29,6 +29,12 @@ td.subject {
 	min-width: 60%;
 }
 
+.unread {
+	font-weight: bold;
+	font-size: large;
+	color: #23f;
+}
+
 .message {
 	border-top: 1px dashed #aaa;
 	margin-top: 1em;
@@ -64,9 +70,10 @@ iframe {
 	<input v-model="query" ref="query" @keyup.enter="search">
 	<table>
 		<tr v-for="res in results" :key="res.thread_id" @click="fetch_thread(res.thread_id)">
+			<td class="unread" v-if="res.tags.indexOf('unread') != -1">•</td>
+			<td v-else></td>
 			<td>{{ res.authors }}</td>
 			<td class="subject">{{ res.subject }}</td>
-			<td>{{ res.tags }}</td>
 			<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
 			<td>{{ res.oldest_date }} – {{ res.newest_date }}</td>
 		</tr>
