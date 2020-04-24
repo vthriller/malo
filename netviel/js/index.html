@@ -9,8 +9,11 @@ body {
 	font-size: 11pt;
 }
 
-input {
-	width: 100%;
+.searchbar {
+	display: flex;
+}
+.searchbar input {
+	flex-grow: 1;
 }
 
 table {
@@ -69,8 +72,12 @@ iframe {
 }
 </style>
 <body><div id="vue">
+	<div class="searchbar">
+		<button class="back" :style="{ visibility: thread ? 'visible' : 'hidden' }" @click="back">←</button>
+		<input v-model="query" ref="query" @keyup.enter="search">
+	</div>
+
 	<div v-show="!thread">
-	<input v-model="query" ref="query" @keyup.enter="search">
 	<table>
 		<tr v-for="res in results" :key="res.thread_id" @click="fetch_thread(res.thread_id)">
 			<td class="unread" v-if="res.tags.indexOf('unread') != -1">•</td>
@@ -168,8 +175,10 @@ var app = new Vue({
 			.then(function(data) {
 				self.thread = data;
 			});
-
-		}
+		},
+		back: function() {
+			this.thread = null;
+		},
 	},
 })
 </script>
