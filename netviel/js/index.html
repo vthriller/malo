@@ -134,6 +134,7 @@ let NetViel = Vue.component('netviel', {
 	watch: {
 		$route: function(to, from) {
 			this.query = to.query.q;
+			this.search();
 		},
 	},
 	mounted: function() {
