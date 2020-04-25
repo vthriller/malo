@@ -294,7 +294,7 @@ let NetViel = Vue.component('netviel', {
 	template: `
 		<div>
 			<div class="searchbar">
-				<button class="back" :style="{ visibility: thread ? 'visible' : 'hidden' }" @click="back">←</button>
+				<button class="back" :disabled="!thread" @click="back">←</button>
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 			</div>
 
