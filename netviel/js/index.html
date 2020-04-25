@@ -140,6 +140,7 @@ let NetViel = Vue.component('netviel', {
 		Vue.nextTick(() => {
 			this.$refs.query.focus();
 		});
+		this.search();
 	},
 	methods: {
 		search: function() {
@@ -150,6 +151,11 @@ let NetViel = Vue.component('netviel', {
 				name: 'main',
 				query: { q: this.query },
 			});
+
+			if(!this.query) {
+				this.results = [];
+				return;
+			}
 
 			let self = this;
 			fetch('/api/query?q=' + encodeURIComponent(this.query))
