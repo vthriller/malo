@@ -3,7 +3,7 @@
 import email
 import email.policy
 import io
-import itertools
+from itertools import islice
 import logging
 import os
 
@@ -124,8 +124,18 @@ def create_app():
     class Query(Resource):
         def get(self):
             query_string = request.args['q']
-            threads = notmuch.Query(get_db(), query_string).search_threads()
-            return threads_to_json(threads, number=None)
+            page = int(request.args.get('page', '1'))
+            per_page = 50
+
+            query = notmuch.Query(get_db(), query_string)
+            count = query.count_threads()
+            threads = query.search_threads()
+            threads = islice(threads, (page - 1) * per_page, page * per_page)
+
+            return dict(
+                pages = count // per_page + 1,
+                threads = threads_to_json(threads),
+            )
 
     class Thread(Resource):
         def get(self, thread_id):
@@ -172,14 +182,9 @@ def create_app():
     return app
 
 
-def threads_to_json(threads, start=0, number=None):
+def threads_to_json(threads):
     """Converts a list of `notmuch.threads.Threads` instances to a JSON object."""
-    if number is None:
-        stop = None
-    else:
-        stop = start + number
-    my_threads = itertools.islice(threads, start, stop)
-    return [thread_to_json(t) for t in my_threads]
+    return [thread_to_json(t) for t in threads]
 
 
 def thread_to_json(thread):

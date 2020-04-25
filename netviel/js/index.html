@@ -72,6 +72,18 @@ iframe {
 	/* if initial iframe is taller than its content, it won't shrink, hence 5px */
 	height: 5px;
 }
+
+.pager span {
+	display: inline-block;
+	border: 1px solid #aaa;
+	min-width: 2ex;
+	min-height: 2ex;
+	text-align: center;
+	cursor: pointer;
+}
+.pager span.current {
+	background-color: #ff0
+}
 </style>
 <body><div id="vue">
 	<router-view></router-view>
@@ -127,7 +139,9 @@ let NetViel = Vue.component('netviel', {
 	data: function() {
 		return {
 			query: this.$route.query.q,
-			results: [],
+			results: null,
+			page: this.$route.query.page || 1,
+
 			thread_id: this.$route.params.thread,
 			thread: null,
 		};
@@ -135,6 +149,7 @@ let NetViel = Vue.component('netviel', {
 	watch: {
 		$route: function(to, from) {
 			this.query = to.query.q;
+			this.page = to.query.page || 1;
 			this.thread_id = to.params.thread;
 			this.update();
 		},
@@ -152,22 +167,34 @@ let NetViel = Vue.component('netviel', {
 			else
 				this.search();
 		},
+		change_page: function(p) {
+			this.$router.push({
+				name: 'main',
+				query: {
+					q: this.query,
+					page: p,
+				},
+			});
+		},
 		search: function() {
 			// back to search result view
 			this.thread = null;
 			// update url
 			this.$router.push({
 				name: 'main',
-				query: { q: this.query },
+				query: {
+					q: this.query,
+					page: this.page,
+				},
 			});
 
 			if(!this.query) {
-				this.results = [];
+				this.results = null;
 				return;
 			}
 
 			let self = this;
-			fetch('/api/query?q=' + encodeURIComponent(this.query))
+			fetch('/api/query?q=' + encodeURIComponent(this.query) + '&page=' + this.page)
 			.then((resp) => {
 				if(!resp.ok)
 					throw new Error(resp.statusText);
@@ -185,7 +212,10 @@ let NetViel = Vue.component('netviel', {
 		goto_thread: function(id) {
 			this.$router.push({
 				name: 'thread',
-				query: { q: this.query },
+				query: {
+					q: this.query,
+					page: this.page,
+				},
 				params: { thread: id },
 			});
 		},
@@ -211,7 +241,10 @@ let NetViel = Vue.component('netviel', {
 			// update url
 			this.$router.push({
 				name: 'main',
-				query: { q: this.query },
+				query: {
+					q: this.query,
+					page: this.page,
+				},
 			});
 		},
 		format_time: function(t) {
@@ -241,8 +274,16 @@ let NetViel = Vue.component('netviel', {
 			</div>
 
 			<div v-show="!thread">
-			<table>
-				<tr v-for="res in results" :key="res.thread_id" @click="goto_thread(res.thread_id)">
+				<div class="pager" v-if="results && results.pages > 1">
+					<span
+						v-for="i in results.pages"
+						:class="{ current: i == page }"
+						@click="change_page(i)"
+						>{{i}}</span>
+				</div>
+
+			<table v-if="results">
+				<tr v-for="res in results.threads" :key="res.thread_id" @click="goto_thread(res.thread_id)">
 					<td class="unread" v-if="res.tags.indexOf('unread') != -1">•</td>
 					<td v-else></td>
 					<td>{{ res.authors }}</td>
