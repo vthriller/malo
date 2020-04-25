@@ -132,7 +132,10 @@ def create_app():
             threads = notmuch.Query(
                 get_db(), "thread:{}".format(thread_id)
             ).search_threads()
-            thread = next(threads)  # there can be only 1
+            try:
+                thread = next(threads)  # there can be only 1
+            except StopIteration:
+                return 'Not found', 404
             messages = thread.get_messages()
             return messages_to_json(messages)
 
@@ -142,7 +145,10 @@ def create_app():
     @app.route("/api/attachment/<string:message_id>/<int:num>")
     def download_attachment(message_id, num):
         msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
-        msg = next(msgs)  # there can be only 1
+        try:
+            msg = next(msgs)  # there can be only 1
+        except StopIteration:
+            return 'Not found', 404
         d = message_attachment(msg, num)
         if not d:
             return None
@@ -156,7 +162,10 @@ def create_app():
     @app.route("/api/message/<string:message_id>")
     def download_message(message_id):
         msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
-        msg = next(msgs)  # there can be only 1
+        try:
+            msg = next(msgs)  # there can be only 1
+        except StopIteration:
+            return 'Not found', 404
         # not message/rfc822: people might want to read it in browser
         return send_file(msg.get_filename(), mimetype="text/plain")
 
