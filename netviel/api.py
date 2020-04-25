@@ -157,7 +157,8 @@ def create_app():
     def download_message(message_id):
         msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
         msg = next(msgs)  # there can be only 1
-        return send_file(msg.get_filename(), mimetype="message/rfc822")
+        # not message/rfc822: people might want to read it in browser
+        return send_file(msg.get_filename(), mimetype="text/plain")
 
     return app
 
