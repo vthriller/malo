@@ -74,28 +74,7 @@ iframe {
 }
 </style>
 <body><div id="vue">
-	<div class="searchbar">
-		<button class="back" :style="{ visibility: thread ? 'visible' : 'hidden' }" @click="back">←</button>
-		<input v-model="query" ref="query" @keyup.enter="search">
-	</div>
-
-	<div v-show="!thread">
-	<table>
-		<tr v-for="res in results" :key="res.thread_id" @click="fetch_thread(res.thread_id)">
-			<td class="unread" v-if="res.tags.indexOf('unread') != -1">•</td>
-			<td v-else></td>
-			<td>{{ res.authors }}</td>
-			<td class="subject">{{ res.subject }}</td>
-			<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
-			<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
-			<td v-else>{{ format_time(res.oldest_date) }}</td>
-		</tr>
-	</table>
-	</div>
-
-	<template v-if="thread">
-		<message v-for="m in thread" v-bind="m"></message>
-	</template>
+	<netviel></netviel>
 </div></body>
 <script src="vue-2.6.11.js"></script>
 <script>
@@ -143,12 +122,13 @@ Vue.component('message', {
 	`,
 });
 
-var app = new Vue({
-	el: '#vue',
-	data: {
-		query: '',
-		results: [],
-		thread: null,
+Vue.component('netviel', {
+	data: function() {
+		return {
+			query: '',
+			results: [],
+			thread: null,
+		};
 	},
 	mounted: function() {
 		Vue.nextTick(() => {
@@ -205,5 +185,35 @@ var app = new Vue({
 			}
 		},
 	},
+	template: `
+		<div>
+			<div class="searchbar">
+				<button class="back" :style="{ visibility: thread ? 'visible' : 'hidden' }" @click="back">←</button>
+				<input v-model="query" ref="query" @keyup.enter="search">
+			</div>
+
+			<div v-show="!thread">
+			<table>
+				<tr v-for="res in results" :key="res.thread_id" @click="fetch_thread(res.thread_id)">
+					<td class="unread" v-if="res.tags.indexOf('unread') != -1">•</td>
+					<td v-else></td>
+					<td>{{ res.authors }}</td>
+					<td class="subject">{{ res.subject }}</td>
+					<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
+					<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
+					<td v-else>{{ format_time(res.oldest_date) }}</td>
+				</tr>
+			</table>
+			</div>
+
+			<template v-if="thread">
+				<message v-for="m in thread" v-bind="m"></message>
+			</template>
+		</div>
+	`,
+});
+
+var app = new Vue({
+	el: '#vue',
 })
 </script>
