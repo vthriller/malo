@@ -128,22 +128,30 @@ let NetViel = Vue.component('netviel', {
 		return {
 			query: this.$route.query.q,
 			results: [],
+			thread_id: this.$route.params.thread,
 			thread: null,
 		};
 	},
 	watch: {
 		$route: function(to, from) {
 			this.query = to.query.q;
-			this.search();
+			this.thread_id = to.params.thread;
+			this.update();
 		},
 	},
 	mounted: function() {
 		Vue.nextTick(() => {
 			this.$refs.query.focus();
 		});
-		this.search();
+		this.update();
 	},
 	methods: {
+		update: function() {
+			if(this.thread_id)
+				this.fetch_thread();
+			else
+				this.search();
+		},
 		search: function() {
 			// back to search result view
 			this.thread = null;
@@ -169,9 +177,16 @@ let NetViel = Vue.component('netviel', {
 				self.results = data;
 			});
 		},
-		fetch_thread: function(id) {
+		goto_thread: function(id) {
+			this.$router.push({
+				name: 'thread',
+				query: { q: this.query },
+				params: { thread: id },
+			});
+		},
+		fetch_thread: function() {
 			let self = this;
-			fetch('/api/thread/' + encodeURIComponent(id))
+			fetch('/api/thread/' + encodeURIComponent(this.thread_id))
 			.catch(function(err) {
 				console.error(err);
 				// TODO
@@ -183,6 +198,11 @@ let NetViel = Vue.component('netviel', {
 		},
 		back: function() {
 			this.thread = null;
+			// update url
+			this.$router.push({
+				name: 'main',
+				query: { q: this.query },
+			});
 		},
 		format_time: function(t) {
 			let dt = new Date(t * 1000);
@@ -212,7 +232,7 @@ let NetViel = Vue.component('netviel', {
 
 			<div v-show="!thread">
 			<table>
-				<tr v-for="res in results" :key="res.thread_id" @click="fetch_thread(res.thread_id)">
+				<tr v-for="res in results" :key="res.thread_id" @click="goto_thread(res.thread_id)">
 					<td class="unread" v-if="res.tags.indexOf('unread') != -1">•</td>
 					<td v-else></td>
 					<td>{{ res.authors }}</td>
@@ -234,6 +254,7 @@ let NetViel = Vue.component('netviel', {
 const router = new VueRouter({
 	routes: [
 		{ name: 'main', path: '/', component: NetViel },
+		{ name: 'thread', path: '/:thread', component: NetViel },
 	]
 });
 
