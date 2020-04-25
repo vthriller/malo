@@ -87,7 +87,8 @@ iframe {
 			<td>{{ res.authors }}</td>
 			<td class="subject">{{ res.subject }}</td>
 			<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
-			<td>{{ res.oldest_date }} – {{ res.newest_date }}</td>
+			<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
+			<td v-else>{{ format_time(res.oldest_date) }}</td>
 		</tr>
 	</table>
 	</div>
@@ -184,6 +185,24 @@ var app = new Vue({
 		},
 		back: function() {
 			this.thread = null;
+		},
+		format_time: function(t) {
+			let dt = new Date(t * 1000);
+			let now = new Date();
+
+			let Y = dt.getFullYear();
+			let m = (dt.getMonth() + 1 + '').replace(/^(.)$/, '0$1');
+			let d = (dt.getDate()      + '').replace(/^(.)$/, '0$1');
+			let H = (dt.getHours()     + '').replace(/^(.)$/, '0$1');
+			let M = (dt.getMinutes()   + '').replace(/^(.)$/, '0$1');
+
+			if(now.getFullYear() != dt.getFullYear()) {
+				return `${Y}-${m}-${d}`
+			} else if(now.getMonth() != dt.getMonth() || now.getDate() != dt.getDate()) {
+				return `${m}-${d}`
+			} else {
+				return `${H}:${M}`;
+			}
 		},
 	},
 })
