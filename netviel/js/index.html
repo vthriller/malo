@@ -35,6 +35,14 @@ td.subject {
 	min-width: 60%;
 }
 
+td.subject > span {
+	display: inline-block;
+	background-color: #bdf;
+	padding: .3ex;
+	margin-right: .5ex;
+	border-radius: 2px;
+}
+
 .unread {
 	font-weight: bold;
 	font-size: large;
@@ -289,7 +297,13 @@ let NetViel = Vue.component('netviel', {
 					<td class="unread" v-if="res.tags.indexOf('unread') != -1">•</td>
 					<td v-else></td>
 					<td>{{ res.authors }}</td>
-					<td class="subject">{{ res.subject }}</td>
+					<td class="subject">
+						<span
+							v-for="tag in res.tags"
+							v-if="['unread', 'attachment', 'replied', 'new'].indexOf(tag) == -1"
+							>{{ tag }}</span>
+						{{ res.subject }}
+					</td>
 					<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
 					<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
 					<td v-else>{{ format_time(res.oldest_date) }}</td>
