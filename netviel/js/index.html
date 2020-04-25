@@ -135,9 +135,6 @@ let NetViel = Vue.component('netviel', {
 		$route: function(to, from) {
 			this.query = to.query.q;
 		},
-		query: function(to, from) {
-			this.$router.push({ name: 'main', query: { q: to }});
-		},
 	},
 	mounted: function() {
 		Vue.nextTick(() => {
@@ -148,6 +145,11 @@ let NetViel = Vue.component('netviel', {
 		search: function() {
 			// back to search result view
 			this.thread = null;
+			// update url
+			this.$router.push({
+				name: 'main',
+				query: { q: this.query },
+			});
 
 			let self = this;
 			fetch('/api/query?q=' + encodeURIComponent(this.query))
