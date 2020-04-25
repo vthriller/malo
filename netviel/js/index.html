@@ -176,7 +176,7 @@ let NetViel = Vue.component('netviel', {
 				},
 			});
 		},
-		search: function() {
+		update_query: function() {
 			// back to search result view
 			this.thread = null;
 			// update url
@@ -184,10 +184,12 @@ let NetViel = Vue.component('netviel', {
 				name: 'main',
 				query: {
 					q: this.query,
-					page: this.page,
+					page: 1, // also go to the first page
 				},
 			});
 
+		},
+		search: function() {
 			if(!this.query) {
 				this.results = null;
 				return;
@@ -270,7 +272,7 @@ let NetViel = Vue.component('netviel', {
 		<div>
 			<div class="searchbar">
 				<button class="back" :style="{ visibility: thread ? 'visible' : 'hidden' }" @click="back">←</button>
-				<input v-model="query" ref="query" @keyup.enter="search">
+				<input v-model="query" ref="query" @keyup.enter="update_query">
 			</div>
 
 			<div v-show="!thread">
