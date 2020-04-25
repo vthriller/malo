@@ -168,11 +168,16 @@ let NetViel = Vue.component('netviel', {
 
 			let self = this;
 			fetch('/api/query?q=' + encodeURIComponent(this.query))
+			.then((resp) => {
+				if(!resp.ok)
+					throw new Error(resp.statusText);
+
+				return resp.json();
+			})
 			.catch(function(err) {
 				console.error(err);
 				// TODO
 			})
-			.then((resp) => resp.json())
 			.then(function(data) {
 				self.results = data;
 			});
@@ -187,11 +192,16 @@ let NetViel = Vue.component('netviel', {
 		fetch_thread: function() {
 			let self = this;
 			fetch('/api/thread/' + encodeURIComponent(this.thread_id))
+			.then((resp) => {
+				if(!resp.ok)
+					throw new Error(resp.statusText);
+
+				return resp.json();
+			})
 			.catch(function(err) {
 				console.error(err);
 				// TODO
 			})
-			.then((resp) => resp.json())
 			.then(function(data) {
 				self.thread = data;
 			});
