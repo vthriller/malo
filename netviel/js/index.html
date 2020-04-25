@@ -74,9 +74,10 @@ iframe {
 }
 </style>
 <body><div id="vue">
-	<netviel></netviel>
+	<router-view></router-view>
 </div></body>
 <script src="vue-2.6.11.js"></script>
+<script src="vue-router-3.1.6.js"></script>
 <script>
 Vue.component('message', {
 	props: 'date subject from to cc bcc content_type content attachments message_id'.split(' '),
@@ -122,13 +123,21 @@ Vue.component('message', {
 	`,
 });
 
-Vue.component('netviel', {
+let NetViel = Vue.component('netviel', {
 	data: function() {
 		return {
-			query: '',
+			query: this.$route.query.q,
 			results: [],
 			thread: null,
 		};
+	},
+	watch: {
+		$route: function(to, from) {
+			this.query = to.query.q;
+		},
+		query: function(to, from) {
+			this.$router.push({ name: 'main', query: { q: to }});
+		},
 	},
 	mounted: function() {
 		Vue.nextTick(() => {
@@ -213,7 +222,14 @@ Vue.component('netviel', {
 	`,
 });
 
+const router = new VueRouter({
+	routes: [
+		{ name: 'main', path: '/', component: NetViel },
+	]
+});
+
 var app = new Vue({
 	el: '#vue',
+	router: router,
 })
 </script>
