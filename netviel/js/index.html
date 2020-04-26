@@ -404,6 +404,7 @@ let NetViel = Vue.component('netviel', {
 							<span
 								v-for="tag in res.tags"
 								v-if="['unread', 'attachment', 'replied', 'new'].indexOf(tag) == -1"
+								@click.stop="append_tag(tag, $event)"
 								>{{ tag }}</span>
 							{{ res.subject }}
 						</td>
