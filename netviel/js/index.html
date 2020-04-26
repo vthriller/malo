@@ -49,12 +49,19 @@ td.subject > span,
 .tags > span {
 	cursor: pointer;
 }
+.tags .unread,
 .tags .total {
-	border: 1px solid #777;
 	border-radius: 1em;
 	/* again, not a typo */
 	padding: .5px .5ex;
 	display: inline-block;
+}
+.tags .unread {
+	background: #c11;
+	color: #fff;
+}
+.tags .total {
+	border: 1px solid #777;
 }
 
 .unread-marker {
@@ -375,7 +382,8 @@ let NetViel = Vue.component('netviel', {
 						@click="append_tag(t.name)"
 						>
 						{{ t.name }}
-						<span class="total">{{ t.count }}</span>
+						<span class="unread" v-if="t.unread">{{ t.unread }}</span>
+						<span class="total">{{ t.total }}</span>
 					</span>
 				</div>
 

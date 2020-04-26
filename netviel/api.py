@@ -132,7 +132,7 @@ def create_app():
             query = notmuch.Query(get_db(), query_string)
             count = query.count_threads()
 
-            tags = defaultdict(int)
+            tags = defaultdict(lambda: [0, 0])
 
             threads = iter(query.search_threads())
 
@@ -145,8 +145,12 @@ def create_app():
                 except StopIteration:
                     threads = iter([]) # to prevent NotInitializedError
                     break
-                for tag in t.get_tags():
-                    tags[tag] += 1
+
+                thread_tags = list(t.get_tags())
+                unread = int('unread' in thread_tags)
+                for tag in thread_tags:
+                    tags[tag][0] += unread
+                    tags[tag][1] += 1
 
             current = []
             for _ in range(per_page):
@@ -155,8 +159,13 @@ def create_app():
                 except StopIteration:
                     threads = iter([]) # to prevent NotInitializedError
                     break
-                for tag in t.get_tags():
-                    tags[tag] += 1
+
+                thread_tags = list(t.get_tags())
+                unread = int('unread' in thread_tags)
+                for tag in thread_tags:
+                    tags[tag][0] += unread
+                    tags[tag][1] += 1
+
                 current.append(t)
 
             while True:
@@ -164,14 +173,18 @@ def create_app():
                 try: t = next(threads)
                 except StopIteration:
                     break
-                for tag in t.get_tags():
-                    tags[tag] += 1
+
+                thread_tags = list(t.get_tags())
+                unread = int('unread' in thread_tags)
+                for tag in thread_tags:
+                    tags[tag][0] += unread
+                    tags[tag][1] += 1
 
             return dict(
                 pages = count // per_page + 1,
                 tags = [
-                    dict(name=name, count=count)
-                    for name, count in sorted(tags.items())
+                    dict(name=name, unread=unread, total=total)
+                    for name, (unread, total) in sorted(tags.items())
                 ],
                 threads = threads_to_json(current),
             )
