@@ -161,7 +161,7 @@ Vue.component('message', {
 					:title="att.filename"
 					>
 					<img v-if="att.content_type.startsWith('image/')" :src="\`/api/attachment/\${message_id}/\${idx}\`">
-					&#x1F4CE; {{ att.filename }}
+					&#x1F4CE;&nbsp;{{ att.filename }}
 				</a>
 			</div>
 			<iframe v-if="isHTML" class="content" @load="resize" ref="content" sandbox='allow-same-origin' :srcdoc="content"></iframe>
