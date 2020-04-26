@@ -149,7 +149,7 @@ Vue.component('message', {
 					v-for="(att, idx) in attachments"
 					:href="\`/api/attachment/\${message_id}/\${idx}\`"
 					v-if="att.filename"
-					>📎  {{ att.filename }}</a>
+					>&#x1F4CE; {{ att.filename }}</a>
 			</div>
 			<iframe v-if="isHTML" class="content" @load="resize" ref="content" sandbox='allow-same-origin' :srcdoc="content"></iframe>
 			<div v-else class="content plain">{{content}}</div>
