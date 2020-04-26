@@ -186,7 +186,7 @@ def create_app():
                     dict(name=name, unread=unread, total=total)
                     for name, (unread, total) in sorted(tags.items())
                 ],
-                threads = threads_to_json(current),
+                threads = [thread_to_json(t) for t in current],
             )
 
     class Thread(Resource):
@@ -234,9 +234,6 @@ def create_app():
     return app
 
 
-def threads_to_json(threads):
-    """Converts a list of `notmuch.threads.Threads` instances to a JSON object."""
-    return [thread_to_json(t) for t in threads]
 
 
 def thread_to_json(thread):
