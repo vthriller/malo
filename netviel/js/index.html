@@ -188,36 +188,6 @@ Vue.component('thread', {
 				this.thread = null;
 			}
 		},
-		change_page: function(p) {
-			this.$router.push({
-				name: 'main',
-				query: {
-					q: this.query,
-					page: p,
-				},
-			});
-		},
-		update_query: function() {
-			// update url
-			this.$router.push({
-				name: 'main',
-				query: {
-					q: this.query,
-					page: 1, // also go to the first page
-				},
-			});
-
-		},
-		goto_thread: function(id) {
-			this.$router.push({
-				name: 'thread',
-				query: {
-					q: this.query,
-					page: this.page,
-				},
-				params: { thread: id },
-			});
-		},
 		fetch_thread: function() {
 			let self = this;
 			fetch('/api/thread/' + encodeURIComponent(this.thread_id))
@@ -234,35 +204,6 @@ Vue.component('thread', {
 			.then(function(data) {
 				self.thread = data;
 			});
-		},
-		back: function() {
-			this.thread = null;
-			// update url
-			this.$router.push({
-				name: 'main',
-				query: {
-					q: this.query,
-					page: this.page,
-				},
-			});
-		},
-		format_time: function(t) {
-			let dt = new Date(t * 1000);
-			let now = new Date();
-
-			let Y = dt.getFullYear();
-			let m = (dt.getMonth() + 1 + '').replace(/^(.)$/, '0$1');
-			let d = (dt.getDate()      + '').replace(/^(.)$/, '0$1');
-			let H = (dt.getHours()     + '').replace(/^(.)$/, '0$1');
-			let M = (dt.getMinutes()   + '').replace(/^(.)$/, '0$1');
-
-			if(now.getFullYear() != dt.getFullYear()) {
-				return `${Y}-${m}-${d}`
-			} else if(now.getMonth() != dt.getMonth() || now.getDate() != dt.getDate()) {
-				return `${m}-${d}`
-			} else {
-				return `${H}:${M}`;
-			}
 		},
 	},
 	template: `
