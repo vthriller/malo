@@ -359,9 +359,9 @@ let NetViel = Vue.component('netviel', {
 
 				<div class="tags" v-if="results">
 					<span
-						v-for="i in results.tags"
-						@click="append_tag(i)"
-						>{{i}}</span>
+						v-for="t in results.tags"
+						@click="append_tag(t.name)"
+						>{{ t.name }} ({{ t.count }})</span>
 				</div>
 
 				<table v-if="results">

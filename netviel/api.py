@@ -3,9 +3,11 @@
 import email
 import email.policy
 import io
-from itertools import islice
 import logging
 import os
+
+from itertools import islice
+from collections import defaultdict
 
 import bleach
 import notmuch
@@ -130,7 +132,7 @@ def create_app():
             query = notmuch.Query(get_db(), query_string)
             count = query.count_threads()
 
-            tags = set()
+            tags = defaultdict(int)
 
             threads = iter(query.search_threads())
 
@@ -143,7 +145,8 @@ def create_app():
                 except StopIteration:
                     threads = iter([]) # to prevent NotInitializedError
                     break
-                tags.update(t.get_tags())
+                for tag in t.get_tags():
+                    tags[tag] += 1
 
             current = []
             for _ in range(per_page):
@@ -152,7 +155,8 @@ def create_app():
                 except StopIteration:
                     threads = iter([]) # to prevent NotInitializedError
                     break
-                tags.update(t.get_tags())
+                for tag in t.get_tags():
+                    tags[tag] += 1
                 current.append(t)
 
             while True:
@@ -160,11 +164,15 @@ def create_app():
                 try: t = next(threads)
                 except StopIteration:
                     break
-                tags.update(t.get_tags())
+                for tag in t.get_tags():
+                    tags[tag] += 1
 
             return dict(
                 pages = count // per_page + 1,
-                tags = sorted(list(tags)),
+                tags = [
+                    dict(name=name, count=count)
+                    for name, count in sorted(tags.items())
+                ],
                 threads = threads_to_json(current),
             )
 
