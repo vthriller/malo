@@ -360,7 +360,7 @@ let NetViel = Vue.component('netviel', {
 			}
 		},
 		append_tag: function(t) {
-			this.query = this.query.replace(/ *$/, ' tag:' + t);
+			this.query = this.query.replace(/ *$/, ' and tag:' + t);
 			this.$refs.query.focus();
 		},
 	},
