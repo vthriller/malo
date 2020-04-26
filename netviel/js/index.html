@@ -167,16 +167,13 @@ Vue.component('thread', {
 	},
 	watch: {
 		$route: function(to, from) {
-			this.update();
+			this.fetch_thread();
 		},
 	},
 	mounted: function() {
-		this.update();
+		this.fetch_thread();
 	},
 	methods: {
-		update: function() {
-			this.fetch_thread();
-		},
 		fetch_thread: function() {
 			let self = this;
 			fetch('/api/thread/' + encodeURIComponent(this.id))
