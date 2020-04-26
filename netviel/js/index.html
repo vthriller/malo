@@ -232,7 +232,6 @@ let NetViel = Vue.component('netviel', {
 	methods: {
 		update: function() {
 			if(this.thread_id) {
-				this.fetch_thread();
 			} else {
 				this.search();
 			}
@@ -287,23 +286,6 @@ let NetViel = Vue.component('netviel', {
 					page: this.page,
 				},
 				params: { thread: id },
-			});
-		},
-		fetch_thread: function() {
-			let self = this;
-			fetch('/api/thread/' + encodeURIComponent(this.thread_id))
-			.then((resp) => {
-				if(!resp.ok)
-					throw new Error(resp.statusText);
-
-				return resp.json();
-			})
-			.catch(function(err) {
-				console.error(err);
-				// TODO
-			})
-			.then(function(data) {
-				self.thread = data;
 			});
 		},
 		back: function() {
