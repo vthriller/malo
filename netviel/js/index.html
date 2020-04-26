@@ -159,15 +159,14 @@ Vue.component('message', {
 });
 
 Vue.component('thread', {
+	props: 'id'.split(' '),
 	data: function() {
 		return {
-			thread_id: this.$route.params.thread,
 			thread: null,
 		};
 	},
 	watch: {
 		$route: function(to, from) {
-			this.thread_id = to.params.thread;
 			this.update();
 		},
 	},
@@ -180,7 +179,7 @@ Vue.component('thread', {
 		},
 		fetch_thread: function() {
 			let self = this;
-			fetch('/api/thread/' + encodeURIComponent(this.thread_id))
+			fetch('/api/thread/' + encodeURIComponent(this.id))
 			.then((resp) => {
 				if(!resp.ok)
 					throw new Error(resp.statusText);
