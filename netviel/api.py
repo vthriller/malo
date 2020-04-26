@@ -268,7 +268,7 @@ def message_to_json(message):
     for part in email_msg.walk():
         if part.get_content_maintype() == "multipart":
             continue
-        if part.get_content_disposition() in ["attachment", "inline"]:
+        if part.get_content_disposition() == "attachment":
             attachments.append(
                 {
                     "filename": part.get_filename(),
@@ -309,7 +309,7 @@ def message_attachment(message, num):
     for part in email_msg.walk():
         if part.get_content_maintype() == "multipart":
             continue
-        if part.get_content_disposition() in ["attachment", "inline"]:
+        if part.get_content_disposition() == "attachment":
             attachments.append(part)
     if not attachments:
         return {}
