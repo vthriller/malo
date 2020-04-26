@@ -129,11 +129,10 @@ def create_app():
             page = int(request.args.get('page', '1'))
             per_page = 50
 
-            query = notmuch.Query(get_db(), query_string)
-            count = query.count_threads()
-
+            count = 0
             tags = defaultdict(lambda: [0, 0])
 
+            query = notmuch.Query(get_db(), query_string)
             threads = iter(query.search_threads())
 
             # N.B. cannot process pages declaratively via zip(threads, range(…))
@@ -145,6 +144,8 @@ def create_app():
                 except StopIteration:
                     threads = iter([]) # to prevent NotInitializedError
                     break
+
+                count += 1
 
                 thread_tags = list(t.get_tags())
                 unread = int('unread' in thread_tags)
@@ -160,6 +161,8 @@ def create_app():
                     threads = iter([]) # to prevent NotInitializedError
                     break
 
+                count += 1
+
                 thread_tags = list(t.get_tags())
                 unread = int('unread' in thread_tags)
                 for tag in thread_tags:
@@ -173,6 +176,8 @@ def create_app():
                 try: t = next(threads)
                 except StopIteration:
                     break
+
+                count += 1
 
                 thread_tags = list(t.get_tags())
                 unread = int('unread' in thread_tags)
