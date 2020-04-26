@@ -164,7 +164,7 @@ def create_app():
 
             return dict(
                 pages = count // per_page + 1,
-                tags = list(tags),
+                tags = sorted(list(tags)),
                 threads = threads_to_json(current),
             )
 
