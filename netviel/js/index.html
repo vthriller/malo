@@ -220,7 +220,7 @@ let NetViel = Vue.component('netviel', {
 			this.query = to.query.q;
 			this.page = to.query.page || 1;
 			this.thread_id = to.params.thread;
-			if(from.query.q != to.query.q)
+			if(from.query.q != to.query.q || from.query.page != to.query.page)
 				this.results = null;
 			this.update();
 		},
