@@ -49,6 +49,13 @@ td.subject > span,
 .tags > span {
 	cursor: pointer;
 }
+.tags .total {
+	border: 1px solid #777;
+	border-radius: 1em;
+	/* again, not a typo */
+	padding: .5px .5ex;
+	display: inline-block;
+}
 
 .unread {
 	font-weight: bold;
@@ -366,7 +373,10 @@ let NetViel = Vue.component('netviel', {
 					<span
 						v-for="t in results.tags"
 						@click="append_tag(t.name)"
-						>{{ t.name }} ({{ t.count }})</span>
+						>
+						{{ t.name }}
+						<span class="total">{{ t.count }}</span>
+					</span>
 				</div>
 
 				<table v-if="results">
