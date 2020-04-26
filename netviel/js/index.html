@@ -213,7 +213,6 @@ let NetViel = Vue.component('netviel', {
 			page: this.$route.query.page || 1,
 
 			thread_id: this.$route.params.thread,
-			thread: null,
 		};
 	},
 	watch: {
@@ -235,8 +234,6 @@ let NetViel = Vue.component('netviel', {
 			if(this.thread_id) {
 				this.fetch_thread();
 			} else {
-				// back to search result view
-				this.thread = null;
 				this.search();
 			}
 		},
@@ -310,7 +307,6 @@ let NetViel = Vue.component('netviel', {
 			});
 		},
 		back: function() {
-			this.thread = null;
 			// update url
 			this.$router.push({
 				name: 'main',
