@@ -81,6 +81,15 @@ td.subject > span {
 	text-decoration: none;
 	padding: .5ex;
 	margin: .2ex;
+	text-align: center;
+	max-width: 30%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.attachments img {
+	display: block;
+	max-width: 100%;
 }
 
 iframe {
@@ -149,7 +158,11 @@ Vue.component('message', {
 					v-for="(att, idx) in attachments"
 					:href="\`/api/attachment/\${message_id}/\${idx}\`"
 					v-if="att.filename"
-					>&#x1F4CE; {{ att.filename }}</a>
+					:title="att.filename"
+					>
+					<img v-if="att.content_type.startsWith('image/')" :src="\`/api/attachment/\${message_id}/\${idx}\`">
+					&#x1F4CE; {{ att.filename }}
+				</a>
 			</div>
 			<iframe v-if="isHTML" class="content" @load="resize" ref="content" sandbox='allow-same-origin' :srcdoc="content"></iframe>
 			<div v-else class="content plain">{{content}}</div>
