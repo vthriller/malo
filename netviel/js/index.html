@@ -185,10 +185,13 @@ let NetViel = Vue.component('netviel', {
 	},
 	methods: {
 		update: function() {
-			if(this.thread_id)
+			if(this.thread_id) {
 				this.fetch_thread();
-			else
+			} else {
+				// back to search result view
+				this.thread = null;
 				this.search();
+			}
 		},
 		change_page: function(p) {
 			this.$router.push({
@@ -200,8 +203,6 @@ let NetViel = Vue.component('netviel', {
 			});
 		},
 		update_query: function() {
-			// back to search result view
-			this.thread = null;
 			// update url
 			this.$router.push({
 				name: 'main',
