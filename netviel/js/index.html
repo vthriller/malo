@@ -374,9 +374,7 @@ let NetViel = Vue.component('netviel', {
 			</table>
 			</div>
 
-			<template v-if="thread">
-				<message v-for="m in thread" v-bind="m"></message>
-			</template>
+			<thread v-if="thread_id" :id="thread_id"></thread>
 		</div>
 	`,
 });
