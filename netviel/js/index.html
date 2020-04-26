@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+:root {
+	--unread: #c11;
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -57,7 +61,7 @@ td.subject > span,
 	display: inline-block;
 }
 .tags .unread {
-	background: #c11;
+	background: var(--unread);
 	color: #fff;
 }
 .tags .total {
@@ -67,7 +71,7 @@ td.subject > span,
 .unread-marker {
 	font-weight: bold;
 	font-size: large;
-	color: #23f;
+	color: var(--unread);
 }
 
 .message {
