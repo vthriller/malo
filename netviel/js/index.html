@@ -161,17 +161,12 @@ Vue.component('message', {
 Vue.component('thread', {
 	data: function() {
 		return {
-			query: this.$route.query.q,
-			page: this.$route.query.page || 1,
-
 			thread_id: this.$route.params.thread,
 			thread: null,
 		};
 	},
 	watch: {
 		$route: function(to, from) {
-			this.query = to.query.q;
-			this.page = to.query.page || 1;
 			this.thread_id = to.params.thread;
 			this.update();
 		},
