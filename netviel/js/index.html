@@ -342,11 +342,11 @@ let NetViel = Vue.component('netviel', {
 	template: `
 		<div>
 			<div class="searchbar">
-				<button class="back" :disabled="!thread" @click="back">←</button>
+				<button class="back" :disabled="!thread_id" @click="back">←</button>
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 			</div>
 
-			<div v-show="!thread">
+			<div v-show="!thread_id">
 				<div class="pager" v-if="results && results.pages > 1">
 					<span
 						v-for="i in results.pages"
