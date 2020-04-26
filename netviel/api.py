@@ -139,28 +139,28 @@ def create_app():
 
             for _ in range((page - 1) * per_page):
                 # before current page
-                try: m = next(threads)
+                try: t = next(threads)
                 except StopIteration:
                     threads = iter([]) # to prevent NotInitializedError
                     break
-                tags.update(m.get_tags())
+                tags.update(t.get_tags())
 
             current = []
             for _ in range(per_page):
                 # current page
-                try: m = next(threads)
+                try: t = next(threads)
                 except StopIteration:
                     threads = iter([]) # to prevent NotInitializedError
                     break
-                tags.update(m.get_tags())
-                current.append(m)
+                tags.update(t.get_tags())
+                current.append(t)
 
             while True:
                 # after current page
-                try: m = next(threads)
+                try: t = next(threads)
                 except StopIteration:
                     break
-                tags.update(m.get_tags())
+                tags.update(t.get_tags())
 
             return dict(
                 pages = count // per_page + 1,
