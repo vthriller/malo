@@ -62,10 +62,21 @@ td.subject > span,
 }
 .tags .unread {
 	background: var(--unread);
+	border: 1px solid var(--unread);
 	color: #fff;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	margin-right: 0;
+	border-right: none;
 }
 .tags .total {
 	border: 1px solid #777;
+}
+.tags .unread + .total {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	margin-left: 0;
+	border-left: none;
 }
 
 .unread-marker {
@@ -386,8 +397,9 @@ let NetViel = Vue.component('netviel', {
 						@click="append_tag(t.name)"
 						>
 						{{ t.name }}
-						<span class="unread" v-if="t.unread">{{ t.unread }}</span>
-						<span class="total">{{ t.total }}</span>
+						<span class="unread" v-if="t.unread">{{ t.unread }}</span><!--
+							keep whitespace away from between these two elements, thanks
+						--><span class="total">{{ t.total }}</span>
 					</span>
 				</div>
 
