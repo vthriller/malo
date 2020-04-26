@@ -359,8 +359,9 @@ let NetViel = Vue.component('netviel', {
 				return `${H}:${M}`;
 			}
 		},
-		append_tag: function(t) {
-			this.query = this.query.replace(/ *$/, ' and tag:' + t);
+		append_tag: function(t, event) {
+			let op = event.ctrlKey ? 'not' : 'and';
+			this.query = this.query.replace(/ *$/, ` ${op} tag:${t}`);
 			this.$refs.query.focus();
 		},
 	},
@@ -383,7 +384,7 @@ let NetViel = Vue.component('netviel', {
 				<div class="tags" v-if="results">
 					<span
 						v-for="t in results.tags"
-						@click="append_tag(t.name)"
+						@click="append_tag(t.name, $event)"
 						>
 						<span class="name">{{ t.name }}</span>
 						<span :class="{ total: true, unread: t.unread }">
