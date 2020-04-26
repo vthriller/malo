@@ -50,8 +50,17 @@ td.subject > span,
 	border-radius: 2px;
 	margin-top: 1px;
 }
+
+.tags {
+	float: left;
+}
 .tags > span {
 	cursor: pointer;
+	display: flex;
+}
+.tags .name {
+	flex-grow: 1;
+	padding-right: 1em;
 }
 .tags .total {
 	border-radius: 1em;
@@ -383,7 +392,7 @@ let NetViel = Vue.component('netviel', {
 						v-for="t in results.tags"
 						@click="append_tag(t.name)"
 						>
-						{{ t.name }}
+						<span class="name">{{ t.name }}</span>
 						<span :class="{ total: true, unread: t.unread }">
 							<template v-if="t.unread">{{ t.unread }}/</template><!--
 								keep whitespace away from between these two elements, thanks
