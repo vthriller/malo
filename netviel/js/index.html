@@ -36,7 +36,8 @@ td.subject {
 	min-width: 60%;
 }
 
-td.subject > span {
+td.subject > span,
+.tags > span {
 	display: inline-block;
 	background-color: #bdf;
 	padding: .3ex;
@@ -335,6 +336,10 @@ let NetViel = Vue.component('netviel', {
 				return `${H}:${M}`;
 			}
 		},
+		append_tag: function(t) {
+			this.query += ' tag:' + t;
+			this.$refs.query.focus();
+		},
 	},
 	template: `
 		<div>
@@ -349,6 +354,13 @@ let NetViel = Vue.component('netviel', {
 						v-for="i in results.pages"
 						:class="{ current: i == page }"
 						@click="change_page(i)"
+						>{{i}}</span>
+				</div>
+
+				<div class="tags" v-if="results">
+					<span
+						v-for="i in results.tags"
+						@click="append_tag(i)"
 						>{{i}}</span>
 				</div>
 

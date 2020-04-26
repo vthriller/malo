@@ -129,12 +129,31 @@ def create_app():
 
             query = notmuch.Query(get_db(), query_string)
             count = query.count_threads()
+
+            tags = set()
+
             threads = query.search_threads()
-            threads = islice(threads, (page - 1) * per_page, page * per_page)
+
+            for _ in range((page - 1) * per_page):
+                # before current page
+                m = next(threads)
+                tags.update(m.get_tags())
+
+            current = []
+            for _ in range(per_page):
+                # current page
+                m = next(threads)
+                tags.update(m.get_tags())
+                current.append(m)
+
+            for m in threads:
+                # after current page
+                tags.update(m.get_tags())
 
             return dict(
                 pages = count // per_page + 1,
-                threads = threads_to_json(threads),
+                tags = list(tags),
+                threads = threads_to_json(current),
             )
 
     class Thread(Resource):
