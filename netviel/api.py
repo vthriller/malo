@@ -132,22 +132,34 @@ def create_app():
 
             tags = set()
 
-            threads = query.search_threads()
+            threads = iter(query.search_threads())
+
+            # N.B. cannot process pages declaratively via zip(threads, range(…))
+            # due to notmuch.errors.NotInitializedError being raised after first StopIteration
 
             for _ in range((page - 1) * per_page):
                 # before current page
-                m = next(threads)
+                try: m = next(threads)
+                except StopIteration:
+                    threads = iter([]) # to prevent NotInitializedError
+                    break
                 tags.update(m.get_tags())
 
             current = []
             for _ in range(per_page):
                 # current page
-                m = next(threads)
+                try: m = next(threads)
+                except StopIteration:
+                    threads = iter([]) # to prevent NotInitializedError
+                    break
                 tags.update(m.get_tags())
                 current.append(m)
 
-            for m in threads:
+            while True:
                 # after current page
+                try: m = next(threads)
+                except StopIteration:
+                    break
                 tags.update(m.get_tags())
 
             return dict(
