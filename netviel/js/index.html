@@ -176,12 +176,7 @@ Vue.component('thread', {
 	},
 	methods: {
 		update: function() {
-			if(this.thread_id) {
-				this.fetch_thread();
-			} else {
-				// back to search result view
-				this.thread = null;
-			}
+			this.fetch_thread();
 		},
 		fetch_thread: function() {
 			let self = this;
