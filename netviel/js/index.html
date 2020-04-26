@@ -177,9 +177,6 @@ Vue.component('thread', {
 		},
 	},
 	mounted: function() {
-		Vue.nextTick(() => {
-			this.$refs.query.focus();
-		});
 		this.update();
 	},
 	methods: {
@@ -270,11 +267,6 @@ Vue.component('thread', {
 	},
 	template: `
 		<div>
-			<div class="searchbar">
-				<button class="back" :disabled="!thread" @click="back">←</button>
-				<input v-model="query" ref="query" @keyup.enter="update_query">
-			</div>
-
 			<div v-show="!thread">
 			</div>
 
