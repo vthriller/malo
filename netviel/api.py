@@ -203,7 +203,9 @@ def create_app():
 
     class Thread(Resource):
         def get(self, query):
-            thread = notmuch.Query(get_db(), query).search_messages()
+            query = notmuch.Query(get_db(), query)
+            query.set_sort(notmuch.Query.SORT.OLDEST_FIRST)
+            thread = query.search_messages()
             messages = [message_to_json(m) for m in thread]
             if not messages:
                 return 'Not found', 404
