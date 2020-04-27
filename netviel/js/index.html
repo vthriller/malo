@@ -333,19 +333,16 @@ Vue.component('search', {
 	},
 	watch: {
 		query: function(to, from) {
-			this.update();
+			this.reload();
 		},
 		page: function(to, from) {
-			this.update();
+			this.reload();
 		},
 	},
 	mounted: function() {
-		this.update();
+		this.reload();
 	},
 	methods: {
-		update: function() {
-				this.reload();
-		},
 		change_page: function(p) {
 			this.$router.push({
 				name: 'main',
