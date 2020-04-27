@@ -30,6 +30,9 @@ tr {
 tr:nth-child(2n+1) {
 	background-color: #eee;
 }
+tr.highlight {
+	background-color: #fe5;
+}
 td {
 	vertical-align: top;
 }
@@ -328,7 +331,7 @@ Vue.component('thread', {
 });
 
 Vue.component('search', {
-	props: 'query page'.split(' '),
+	props: 'query page highlight'.split(' '),
 	data: function() {
 		return {
 			results: null,
@@ -435,7 +438,11 @@ Vue.component('search', {
 				</div>
 
 				<table v-if="results">
-					<tr v-for="res in results.threads" :key="res.thread_id" @click="goto_thread(res.thread_id)">
+					<tr
+						v-for="res in results.threads"
+						:key="res.thread_id"
+						:class="{ highlight: res.thread_id == highlight }"
+						@click="goto_thread(res.thread_id)">
 						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
 						<td>{{ res.authors }}</td>
 						<td class="subject">
@@ -517,6 +524,7 @@ let NetViel = Vue.component('netviel', {
 				:class="{ 'compact': thread_id }"
 				:query="this.$route.query.q"
 				:page="this.$route.query.page || 1"
+				:highlight="thread_id"
 				@query-append="query_append"
 				></search>
 
