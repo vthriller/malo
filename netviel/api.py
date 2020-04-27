@@ -204,7 +204,7 @@ def create_app():
             except StopIteration:
                 return 'Not found', 404
             messages = thread.get_messages()
-            return messages_to_json(messages)
+            return [message_to_json(m) for m in messages]
 
     api.add_resource(Query, "/api/query")
     api.add_resource(Thread, "/api/thread/<string:thread_id>")
@@ -286,11 +286,6 @@ def thread_to_json(thread):
         "thread_id": thread.get_thread_id(),
         "total_messages": thread.get_total_messages(),
     }
-
-
-def messages_to_json(messages):
-    """Converts a list of `notmuch.message.Message` instances to a JSON object."""
-    return [message_to_json(m) for m in messages]
 
 
 def message_to_json(message):
