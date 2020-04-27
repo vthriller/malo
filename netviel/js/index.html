@@ -283,7 +283,7 @@ Vue.component('message', {
 });
 
 Vue.component('thread', {
-	props: 'id'.split(' '),
+	props: 'query'.split(' '),
 	data: function() {
 		return {
 			thread: null,
@@ -301,7 +301,7 @@ Vue.component('thread', {
 	methods: {
 		fetch_thread: function() {
 			let self = this;
-			fetch('/api/thread/' + encodeURIComponent(this.id))
+			fetch('/api/thread/' + encodeURIComponent(this.query))
 			.then((resp) => {
 				if(!resp.ok)
 					throw new Error(resp.statusText);
@@ -586,7 +586,7 @@ let NetViel = Vue.component('netviel', {
 				@query-append="query_append"
 				></search>
 
-			<thread v-if="thread_id" :id="thread_id" @update-tags="function(tags) { $refs.search.update_tags(thread_id, tags) }"></thread>
+			<thread v-if="thread_id" :query="thread_id" @update-tags="function(tags) { $refs.search.update_tags(thread_id, tags) }"></thread>
 		</div>
 	`,
 });
