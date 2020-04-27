@@ -438,7 +438,6 @@ let NetViel = Vue.component('netviel', {
 	data: function() {
 		return {
 			query: this.$route.query.q,
-			results: null,
 			page: this.$route.query.page || 1,
 
 			thread_id: this.$route.params.thread,
@@ -471,9 +470,6 @@ let NetViel = Vue.component('netviel', {
 			});
 		},
 		update_query: function() {
-			// (re)load query results unconditionally when enter is pressed
-			this.results = null;
-
 			if(this.$route.query.q == this.query && this.$route.query.page == '1')
 				// force the update if neither query nor page didn't change
 				this.update();
