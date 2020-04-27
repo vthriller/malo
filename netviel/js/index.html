@@ -317,6 +317,18 @@ Vue.component('thread', {
 			});
 		},
 	},
+	computed: {
+		all_tags: function() {
+			let s = new Set();
+			for(m of this.thread) {
+				for(t of m.tags) {
+					s.add(t);
+				}
+			}
+			s = Array.from(s);
+			return s;
+		},
+	},
 	template: `
 		<div>
 			<div v-show="!thread">
@@ -324,7 +336,7 @@ Vue.component('thread', {
 			</div>
 
 			<template v-if="thread">
-				<message v-for="m in thread" v-bind="m" @update-tags="function(tags) { m.tags = tags }"></message>
+				<message v-for="m in thread" v-bind="m" @update-tags="function(tags) { m.tags = tags; $emit('update-tags', all_tags) }"></message>
 			</template>
 		</div>
 	`,
@@ -357,6 +369,15 @@ Vue.component('search', {
 					page: p,
 				},
 			});
+		},
+		update_tags: function(thread, tags) {
+			if(!this.results) return;
+			for(let t of this.results.threads) {
+				if(t.thread_id == thread) {
+					t.tags = tags;
+					return;
+				}
+			}
 		},
 		reload: function() {
 			this.results = null;
@@ -528,7 +549,7 @@ let NetViel = Vue.component('netviel', {
 				@query-append="query_append"
 				></search>
 
-			<thread v-if="thread_id" :id="thread_id"></thread>
+			<thread v-if="thread_id" :id="thread_id" @update-tags="function(tags) { $refs.search.update_tags(thread_id, tags) }"></thread>
 		</div>
 	`,
 });
