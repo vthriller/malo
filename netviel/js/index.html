@@ -301,7 +301,7 @@ Vue.component('thread', {
 	methods: {
 		fetch_thread: function() {
 			let self = this;
-			fetch('/api/thread/' + encodeURIComponent(this.id))
+			fetch('/api/thread/thread:' + encodeURIComponent(this.id))
 			.then((resp) => {
 				if(!resp.ok)
 					throw new Error(resp.statusText);

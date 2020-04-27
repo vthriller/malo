@@ -202,19 +202,15 @@ def create_app():
             )
 
     class Thread(Resource):
-        def get(self, thread_id):
-            threads = notmuch.Query(
-                get_db(), "thread:{}".format(thread_id)
-            ).search_threads()
-            try:
-                thread = next(threads)  # there can be only 1
-            except StopIteration:
+        def get(self, query):
+            thread = notmuch.Query(get_db(), query).search_messages()
+            messages = [message_to_json(m) for m in thread]
+            if not messages:
                 return 'Not found', 404
-            messages = thread.get_messages()
-            return [message_to_json(m) for m in messages]
+            return messages
 
     api.add_resource(Query, "/api/query")
-    api.add_resource(Thread, "/api/thread/<string:thread_id>")
+    api.add_resource(Thread, "/api/thread/<string:query>") # usually thread:012abcdef or mid:20200102@example.com
 
     @app.route("/api/attachment/<string:message_id>/<int:num>")
     def download_attachment(message_id, num):
