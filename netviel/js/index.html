@@ -79,6 +79,9 @@ td.subject > span,
 .unread-marker {
 	font-weight: bold;
 	font-size: large;
+	color: #bbb;
+}
+.unread-marker.unread {
 	color: var(--unread);
 }
 
@@ -408,8 +411,7 @@ let NetViel = Vue.component('netviel', {
 
 				<table v-if="results">
 					<tr v-for="res in results.threads" :key="res.thread_id" @click="goto_thread(res.thread_id)">
-						<td class="unread-marker" v-if="res.tags.indexOf('unread') != -1">•</td>
-						<td v-else></td>
+						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
 						<td>{{ res.authors }}</td>
 						<td class="subject">
 							<span
