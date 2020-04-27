@@ -162,6 +162,12 @@ iframe {
 <script>
 Vue.component('message', {
 	props: 'date subject from to cc bcc content_type content attachments message_id tags'.split(' '),
+	data: function() {
+		// TODO? watch this.tags
+		return {
+			tags_local: this.tags,
+		}
+	},
 	computed: {
 		isHTML: function() {
 			return this.content_type == 'text/html'
@@ -177,12 +183,12 @@ Vue.component('message', {
 		<div class="message">
 			<div class="meta">
 				<div class="toggles">
-					<div :class="{ 'unread-marker': true, 'unread': tags.indexOf('unread') != -1 }">•</div>
+					<div :class="{ 'unread-marker': true, 'unread': tags_local.indexOf('unread') != -1 }">•</div>
 				</div>
 				<div class="data">
 					<span class="date">{{date}}</span>
 					<div class="tags">
-						<span v-for="t in tags" v-if="t != 'unread'">{{ t }}</span>
+						<span v-for="t in tags_local" v-if="t != 'unread'">{{ t }}</span>
 					</div>
 					<span class="raw"><a :href="\`/api/message/\${message_id}/raw\`">raw</a></span>
 					<span class="subject">{{subject}}</span>
