@@ -175,11 +175,16 @@ iframe {
 Vue.component('message', {
 	props: 'date subject from to cc bcc content_type content attachments message_id tags'.split(' '),
 	data: function() {
-		// TODO? watch this.tags
 		return {
+			// shadow tags so we can update it when we toggle_unread()
 			tags_local: this.tags,
 			folded: false,
 		}
+	},
+	watch: {
+		tags: function(to, from) {
+			this.tags_local = to;
+		},
 	},
 	computed: {
 		isHTML: function() {
