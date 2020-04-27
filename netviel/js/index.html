@@ -309,13 +309,10 @@ Vue.component('search', {
 	data: function() {
 		return {
 			results: null,
-
-			thread_id: this.$route.params.thread,
 		};
 	},
 	watch: {
 		$route: function(to, from) {
-			this.thread_id = to.params.thread;
 			this.update();
 		},
 	},
@@ -324,9 +321,7 @@ Vue.component('search', {
 	},
 	methods: {
 		update: function() {
-			if(!this.thread_id) {
 				this.search();
-			}
 		},
 		change_page: function(p) {
 			this.$router.push({
@@ -394,7 +389,7 @@ Vue.component('search', {
 	},
 	template: `
 		<div>
-			<div class="results" v-show="!thread_id">
+			<div class="results">
 				<div class="pager" v-if="results && results.pages > 1">
 					<span
 						v-for="i in results.pages"
@@ -435,8 +430,6 @@ Vue.component('search', {
 					</tr>
 				</table>
 			</div>
-
-			<thread v-if="thread_id" :id="thread_id"></thread>
 		</div>
 	`,
 });
