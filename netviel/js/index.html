@@ -304,6 +304,181 @@ Vue.component('thread', {
 	`,
 });
 
+Vue.component('search', {
+	data: function() {
+		return {
+			query: this.$route.query.q,
+			results: null,
+			page: this.$route.query.page || 1,
+
+			thread_id: this.$route.params.thread,
+		};
+	},
+	watch: {
+		$route: function(to, from) {
+			this.query = to.query.q;
+			this.page = to.query.page || 1;
+			this.thread_id = to.params.thread;
+			this.update();
+		},
+	},
+	mounted: function() {
+		Vue.nextTick(() => {
+			this.$refs.query.focus();
+		});
+		this.update();
+	},
+	methods: {
+		update: function() {
+			if(!this.thread_id) {
+				this.search();
+			}
+		},
+		change_page: function(p) {
+			this.$router.push({
+				name: 'main',
+				query: {
+					q: this.query,
+					page: p,
+				},
+			});
+		},
+		update_query: function() {
+			// (re)load query results unconditionally when enter is pressed
+			this.results = null;
+
+			if(this.$route.query.q == this.query && this.$route.query.page == '1')
+				// force the update if neither query nor page didn't change
+				this.update();
+			else
+				this.$router.push({
+					name: 'main',
+					query: {
+						q: this.query,
+						page: 1, // also go to the first page
+					},
+				});
+		},
+		search: function() {
+			this.results = null;
+			if(!this.query) {
+				return;
+			}
+
+			let self = this;
+			fetch('/api/query?q=' + encodeURIComponent(this.query) + '&page=' + this.page)
+			.then((resp) => {
+				if(!resp.ok)
+					throw new Error(resp.statusText);
+
+				return resp.json();
+			})
+			.catch(function(err) {
+				console.error(err);
+				// TODO
+			})
+			.then(function(data) {
+				self.results = data;
+			});
+		},
+		goto_thread: function(id) {
+			this.$router.push({
+				name: 'thread',
+				query: {
+					q: this.query,
+					page: this.page,
+				},
+				params: { thread: id },
+			});
+		},
+		back: function() {
+			// update url
+			this.$router.push({
+				name: 'main',
+				query: {
+					q: this.query,
+					page: this.page,
+				},
+			});
+		},
+		format_time: function(t) {
+			let dt = new Date(t * 1000);
+			let now = new Date();
+
+			let Y = dt.getFullYear();
+			let m = (dt.getMonth() + 1 + '').replace(/^(.)$/, '0$1');
+			let d = (dt.getDate()      + '').replace(/^(.)$/, '0$1');
+			let H = (dt.getHours()     + '').replace(/^(.)$/, '0$1');
+			let M = (dt.getMinutes()   + '').replace(/^(.)$/, '0$1');
+
+			if(now.getFullYear() != dt.getFullYear()) {
+				return `${Y}-${m}-${d}`
+			} else if(now.getMonth() != dt.getMonth() || now.getDate() != dt.getDate()) {
+				return `${m}-${d}`
+			} else {
+				return `${H}:${M}`;
+			}
+		},
+		append_tag: function(t, event) {
+			let op = event.ctrlKey ? 'not' : 'and';
+			this.query = this.query.replace(/ *$/, ` ${op} tag:${t}`);
+			this.$refs.query.focus();
+		},
+	},
+	template: `
+		<div>
+			<div class="searchbar">
+				<button class="back" :disabled="!thread_id" @click="back">←</button>
+				<input v-model="query" ref="query" @keyup.enter="update_query">
+			</div>
+
+			<div class="results" v-show="!thread_id">
+				<div class="pager" v-if="results && results.pages > 1">
+					<span
+						v-for="i in results.pages"
+						:class="{ current: i == page }"
+						@click="change_page(i)"
+						>{{i}}</span>
+				</div>
+
+				<div class="tags" v-if="results">
+					<span
+						v-for="t in results.tags"
+						@click="append_tag(t.name, $event)"
+						>
+						<span class="name">{{ t.name }}</span>
+						<span :class="{ total: true, unread: t.unread }">
+							<template v-if="t.unread">{{ t.unread }}/</template><!--
+								keep whitespace away from between these two elements, thanks
+							-->{{ t.total }}
+						</span>
+					</span>
+				</div>
+
+				<table v-if="results">
+					<tr v-for="res in results.threads" :key="res.thread_id" @click="goto_thread(res.thread_id)">
+						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
+						<td>{{ res.authors }}</td>
+						<td class="subject">
+							<span
+								v-for="tag in res.tags"
+								v-if="['unread', 'attachment', 'replied', 'new'].indexOf(tag) == -1"
+								@click.stop="append_tag(tag, $event)"
+								>{{ tag }}</span>
+							{{ res.subject }}
+						</td>
+						<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
+						<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
+						<td v-else>{{ format_time(res.oldest_date) }}</td>
+					</tr>
+				</table>
+			</div>
+
+			<thread v-if="thread_id" :id="thread_id"></thread>
+		</div>
+	`,
+});
+
 let NetViel = Vue.component('netviel', {
 	data: function() {
 		return {
