@@ -332,7 +332,10 @@ Vue.component('search', {
 		};
 	},
 	watch: {
-		$route: function(to, from) {
+		query: function(to, from) {
+			this.update();
+		},
+		page: function(to, from) {
 			this.update();
 		},
 	},
