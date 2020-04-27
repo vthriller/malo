@@ -344,7 +344,7 @@ Vue.component('search', {
 	},
 	methods: {
 		update: function() {
-				this.search();
+				this.reload();
 		},
 		change_page: function(p) {
 			this.$router.push({
@@ -355,7 +355,7 @@ Vue.component('search', {
 				},
 			});
 		},
-		search: function() {
+		reload: function() {
 			this.results = null;
 			if(!this.query) {
 				return;
@@ -478,7 +478,7 @@ let NetViel = Vue.component('netviel', {
 		update_query: function() {
 			if(this.$route.query.q == this.query && this.$route.query.page == '1') {
 				// force the update if neither query nor page didn't change
-				this.$refs.search.search();
+				this.$refs.search.reload();
 			} else
 				this.$router.push({
 					name: 'main',
