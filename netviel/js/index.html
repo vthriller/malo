@@ -509,6 +509,7 @@ let NetViel = Vue.component('netviel', {
 	data: function() {
 		return {
 			query: this.$route.query.q,
+			what: 'threads',
 		};
 	},
 	watch: {
@@ -560,6 +561,8 @@ let NetViel = Vue.component('netviel', {
 			<div class="searchbar">
 				<button class="back" :disabled="!thread_id" @click="back">←</button>
 				<input v-model="query" ref="query" @keyup.enter="update_query">
+				<label><input type="radio" v-model="what" value="threads"> threads</label>
+				<label><input type="radio" v-model="what" value="messages"> messages</label>
 			</div>
 
 			<search
@@ -568,7 +571,7 @@ let NetViel = Vue.component('netviel', {
 				:query="this.$route.query.q"
 				:page="this.$route.query.page || 1"
 				:highlight="thread_id"
-				what="messages"
+				:what="what"
 				@query-append="query_append"
 				></search>
 
