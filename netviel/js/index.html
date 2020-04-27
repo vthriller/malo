@@ -343,7 +343,7 @@ Vue.component('thread', {
 });
 
 Vue.component('search', {
-	props: 'query page highlight'.split(' '),
+	props: 'query page highlight what'.split(' '),
 	data: function() {
 		return {
 			results: null,
@@ -354,6 +354,9 @@ Vue.component('search', {
 			this.reload();
 		},
 		page: function(to, from) {
+			this.reload();
+		},
+		what: function(to, from) {
 			this.reload();
 		},
 	},
@@ -386,7 +389,7 @@ Vue.component('search', {
 			}
 
 			let self = this;
-			fetch('/api/query?q=' + encodeURIComponent(this.query) + '&page=' + this.page)
+			fetch('/api/query?q=' + encodeURIComponent(this.query) + '&page=' + this.page + '&what=' + this.what)
 			.then((resp) => {
 				if(!resp.ok)
 					throw new Error(resp.statusText);
@@ -458,7 +461,7 @@ Vue.component('search', {
 					</span>
 				</div>
 
-				<table v-if="results">
+				<table v-if="results && what == 'threads'">
 					<tr
 						v-for="res in results.threads"
 						:key="res.thread_id"
@@ -477,6 +480,25 @@ Vue.component('search', {
 						<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
 						<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
 						<td v-else>{{ format_time(res.oldest_date) }}</td>
+					</tr>
+				</table>
+
+				<table v-if="results && what == 'messages'">
+					<tr
+						v-for="res in results.messages"
+						:key="res.thread_id">
+						<!-- TODO: highlight, goto_message -->
+						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
+						<td>{{ res.from }}</td>
+						<td class="subject">
+							<span
+								v-for="tag in res.tags"
+								v-if="['unread', 'attachment', 'replied', 'new'].indexOf(tag) == -1"
+								@click.stop="append_tag(tag, $event)"
+								>{{ tag }}</span>
+							{{ res.subject }}
+						</td>
+						<td>{{ res.date }}</td>
 					</tr>
 				</table>
 			</div>
@@ -546,6 +568,7 @@ let NetViel = Vue.component('netviel', {
 				:query="this.$route.query.q"
 				:page="this.$route.query.page || 1"
 				:highlight="thread_id"
+				what="messages"
 				@query-append="query_append"
 				></search>
 

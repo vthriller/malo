@@ -127,13 +127,19 @@ def create_app():
         def get(self):
             query_string = request.args['q']
             page = int(request.args.get('page', '1'))
+            what = request.args.get('what', 'threads')
             per_page = 50
 
             count = 0
             tags = defaultdict(lambda: [0, 0])
 
             query = notmuch.Query(get_db(), query_string)
-            threads = iter(query.search_threads())
+            if what == 'threads':
+                threads = iter(query.search_threads())
+            elif what == 'messages':
+                threads = iter(query.search_messages())
+            else:
+                return 'Bad request', 400
 
             # N.B. cannot process pages declaratively via zip(threads, range(…))
             # due to notmuch.errors.NotInitializedError being raised after first StopIteration
@@ -191,7 +197,8 @@ def create_app():
                     dict(name=name, unread=unread, total=total)
                     for name, (unread, total) in sorted(tags.items())
                 ],
-                threads = [thread_to_json(t) for t in current],
+                threads = [thread_to_json(t) for t in current] if what == 'threads' else None,
+                messages = [message_to_json(t, skip_content=True) for t in current] if what == 'messages' else None,
             )
 
     class Thread(Resource):
@@ -287,11 +294,11 @@ def thread_to_json(thread):
         "total_messages": thread.get_total_messages(),
     }
 
-def message_to_json(message):
+def message_to_json(message, skip_content=False):
     """Converts a `notmuch.message.Message` instance to a JSON object."""
     with open(message.get_filename(), "rb") as f:
         email_msg = email.message_from_binary_file(f, policy=email.policy.default)
-    if True:
+    if not skip_content:
         attachments = []
         for part in email_msg.walk():
             if part.get_content_maintype() == "multipart":
@@ -322,13 +329,12 @@ def message_to_json(message):
         "bcc": email_msg["BCC"],
         "date": email_msg["Date"],
         "subject": email_msg["Subject"],
-        "content": content,
-        "content_type": content_type,
-        "attachments": attachments,
+        "content": content if not skip_content else None,
+        "content_type": content_type if not skip_content else None,
+        "attachments": attachments if not skip_content else None,
         "message_id": message.get_message_id(),
         "tags": list(message.get_tags()),
     }
-
 
 def message_attachment(message, num):
     """Returns attachment no. `num` of a `notmuch.message.Message` instance."""
