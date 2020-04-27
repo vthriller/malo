@@ -176,7 +176,7 @@ Vue.component('message', {
 	props: 'date subject from to cc bcc content_type content attachments message_id tags'.split(' '),
 	data: function() {
 		return {
-			folded: false,
+			folded: this.tags.indexOf('unread') == -1,
 		}
 	},
 	watch: {
