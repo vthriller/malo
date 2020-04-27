@@ -529,7 +529,7 @@ let NetViel = Vue.component('netviel', {
 		},
 	},
 	computed: {
-		thread_id: function() {
+		thread_query: function() {
 			return this.$route.params.thread;
 		},
 	},
@@ -570,7 +570,7 @@ let NetViel = Vue.component('netviel', {
 	template: `
 		<div>
 			<div class="searchbar">
-				<button class="back" :disabled="!thread_id" @click="back">←</button>
+				<button class="back" :disabled="!thread_query" @click="back">←</button>
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 				<label><input type="radio" v-model="what" value="threads"> threads</label>
 				<label><input type="radio" v-model="what" value="messages"> messages</label>
@@ -578,15 +578,15 @@ let NetViel = Vue.component('netviel', {
 
 			<search
 				ref="search"
-				:class="{ 'compact': thread_id }"
+				:class="{ 'compact': thread_query }"
 				:query="this.$route.query.q"
 				:page="this.$route.query.page || 1"
-				:highlight="thread_id"
+				:highlight="thread_query"
 				:what="what"
 				@query-append="query_append"
 				></search>
 
-			<thread v-if="thread_id" :query="thread_id" @update-tags="function(tags) { $refs.search.update_tags(thread_id, tags) }"></thread>
+			<thread v-if="thread_query" :query="thread_query" @update-tags="function(tags) { $refs.search.update_tags(thread_query, tags) }"></thread>
 		</div>
 	`,
 });
