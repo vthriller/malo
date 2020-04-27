@@ -384,7 +384,7 @@ Vue.component('search', {
 		},
 		append_tag: function(t, event) {
 			let op = event.ctrlKey ? 'not' : 'and';
-			this.query = this.query.replace(/ *$/, ` ${op} tag:${t}`);
+			this.$emit('query-append', ` ${op} tag:${t}`);
 		},
 	},
 	template: `
@@ -549,9 +549,8 @@ let NetViel = Vue.component('netviel', {
 				return `${H}:${M}`;
 			}
 		},
-		append_tag: function(t, event) {
-			let op = event.ctrlKey ? 'not' : 'and';
-			this.query = this.query.replace(/ *$/, ` ${op} tag:${t}`);
+		query_append: function(tail) {
+			this.query = this.query.replace(/ *$/, tail);
 			this.$refs.query.focus();
 		},
 	},
@@ -562,7 +561,7 @@ let NetViel = Vue.component('netviel', {
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 			</div>
 
-			<search v-if="!thread_id" :query="query" :page="page"></search>
+			<search v-if="!thread_id" :query="query" :page="page" @query-append="query_append"></search>
 
 			<thread v-if="thread_id" :id="thread_id"></thread>
 		</div>
