@@ -76,6 +76,12 @@ td.subject > span,
 	color: var(--unread);
 }
 
+.results.compact {
+	min-height: 5em;
+	height: 30vh;
+	overflow-y: scroll;
+}
+
 .unread-marker {
 	font-weight: bold;
 	font-size: large;
@@ -498,7 +504,7 @@ let NetViel = Vue.component('netviel', {
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 			</div>
 
-			<search v-if="!thread_id" :query="query" :page="page" @query-append="query_append"></search>
+			<search :class="{ 'compact': thread_id }" :query="query" :page="page" @query-append="query_append"></search>
 
 			<thread v-if="thread_id" :id="thread_id"></thread>
 		</div>
