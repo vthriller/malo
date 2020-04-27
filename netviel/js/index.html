@@ -91,8 +91,16 @@ td.subject > span,
 }
 
 .message .meta {
+	display: flex;
 	margin-bottom: 1ex;
 	background-color: #eee;
+}
+.message .meta .data {
+	flex-grow: 1;
+}
+.message .meta .toggles {
+	flex-shrink: 1;
+	margin: 0 .5ex;
 }
 
 .message .subject {
@@ -168,9 +176,13 @@ Vue.component('message', {
 	template: `
 		<div class="message">
 			<div class="meta">
+				<div class="toggles">
+					<div :class="{ 'unread-marker': true, 'unread': tags.indexOf('unread') != -1 }">•</div>
+				</div>
+				<div class="data">
 				<span class="date">{{date}}</span>
 				<div class="tags">
-					<span v-for="t in tags">{{ t }}</span>
+					<span v-for="t in tags" v-if="t != 'unread'">{{ t }}</span>
 				</div>
 				<span class="raw"><a :href="\`/api/message/\${message_id}\`">raw</a></span>
 				<span class="subject">{{subject}}</span>
@@ -190,6 +202,7 @@ Vue.component('message', {
 					<br>
 					BCC: {{bcc}}
 				</template>
+				</div>
 			</div>
 			<div class="attachments">
 				<a
