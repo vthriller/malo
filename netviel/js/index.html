@@ -182,6 +182,10 @@ Vue.component('message', {
 		}
 	},
 	watch: {
+		message_id: function(to, from) {
+			// thanks, VDOM :|
+			this.folded = false;
+		},
 		tags: function(to, from) {
 			this.tags_local = to;
 		},
