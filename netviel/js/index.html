@@ -562,47 +562,7 @@ let NetViel = Vue.component('netviel', {
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 			</div>
 
-			<div class="results" v-show="!thread_id">
-				<div class="pager" v-if="results && results.pages > 1">
-					<span
-						v-for="i in results.pages"
-						:class="{ current: i == page }"
-						@click="change_page(i)"
-						>{{i}}</span>
-				</div>
-
-				<div class="tags" v-if="results">
-					<span
-						v-for="t in results.tags"
-						@click="append_tag(t.name, $event)"
-						>
-						<span class="name">{{ t.name }}</span>
-						<span :class="{ total: true, unread: t.unread }">
-							<template v-if="t.unread">{{ t.unread }}/</template><!--
-								keep whitespace away from between these two elements, thanks
-							-->{{ t.total }}
-						</span>
-					</span>
-				</div>
-
-				<table v-if="results">
-					<tr v-for="res in results.threads" :key="res.thread_id" @click="goto_thread(res.thread_id)">
-						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
-						<td>{{ res.authors }}</td>
-						<td class="subject">
-							<span
-								v-for="tag in res.tags"
-								v-if="['unread', 'attachment', 'replied', 'new'].indexOf(tag) == -1"
-								@click.stop="append_tag(tag, $event)"
-								>{{ tag }}</span>
-							{{ res.subject }}
-						</td>
-						<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
-						<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
-						<td v-else>{{ format_time(res.oldest_date) }}</td>
-					</tr>
-				</table>
-			</div>
+			<search v-if="!thread_id" :query="query" :page="page"></search>
 
 			<thread v-if="thread_id" :id="thread_id"></thread>
 		</div>
