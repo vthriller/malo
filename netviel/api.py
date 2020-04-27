@@ -11,7 +11,7 @@ from collections import defaultdict
 
 import bleach
 import notmuch
-from flask import Flask, current_app, g, send_file, send_from_directory, request
+from flask import Flask, current_app, g, send_file, send_from_directory, request, jsonify
 from flask_cors import CORS
 from flask_restful import Api, Resource
 
@@ -87,7 +87,7 @@ ALLOWED_STYLES = [
 def get_db():
     """Get a new `Database` instance. Called before every request. Cached on first call."""
     if "db" not in g:
-        g.db = notmuch.Database(current_app.config["NOTMUCH_PATH"], create=False)
+        g.db = notmuch.Database(current_app.config["NOTMUCH_PATH"], create=False, mode=notmuch.Database.MODE.READ_WRITE)
     return g.db
 
 
@@ -244,6 +244,30 @@ def create_app():
             return 'Not found', 404
         # not message/rfc822: people might want to read it in browser
         return send_file(msg.get_filename(), mimetype="text/plain")
+
+    @app.route('/api/message/<string:message_id>/tag/<string:tag>/add')
+    def add_tag(message_id, tag):
+        msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
+        try:
+            msg = next(msgs)  # there can be only 1
+        except StopIteration:
+            return 'Not found', 404
+
+        msg.add_tag(tag, sync_maildir_flags=True)
+
+        return jsonify(list(msg.get_tags()))
+
+    @app.route('/api/message/<string:message_id>/tag/<string:tag>/remove')
+    def remove_tag(message_id, tag):
+        msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
+        try:
+            msg = next(msgs)  # there can be only 1
+        except StopIteration:
+            return 'Not found', 404
+
+        msg.remove_tag(tag, sync_maildir_flags=True)
+
+        return jsonify(list(msg.get_tags()))
 
     return app
 

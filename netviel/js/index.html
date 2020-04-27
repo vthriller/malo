@@ -113,6 +113,10 @@ td.subject > span,
 	clear: right;
 }
 
+.message .unread-marker {
+	cursor: pointer;
+}
+
 .message .content.plain {
 	white-space: pre-wrap;
 	font-family: monospace;
@@ -172,18 +176,43 @@ Vue.component('message', {
 		isHTML: function() {
 			return this.content_type == 'text/html'
 		},
+		unread: function() {
+			return this.tags_local.indexOf('unread') != -1;
+		},
 	},
 	methods: {
 		resize: function() {
 			let c = this.$refs.content;
 			c.style.height = c.contentWindow.document.documentElement.scrollHeight + 'px';
-		}
+		},
+		toggle_unread: function() {
+			let action = this.unread ? 'remove' : 'add';
+
+			let self = this;
+			fetch(`/api/message/${this.message_id}/tag/unread/${action}`)
+			.then((resp) => {
+				if(!resp.ok)
+					throw new Error(resp.statusText);
+
+				return resp.json();
+			})
+			.catch(function(err) {
+				console.error(err);
+				// TODO
+			})
+			.then(function(data) {
+				self.tags_local = data;
+			});
+		},
 	},
 	template: `
 		<div class="message">
 			<div class="meta">
 				<div class="toggles">
-					<div :class="{ 'unread-marker': true, 'unread': tags_local.indexOf('unread') != -1 }">•</div>
+					<div
+						:class="{ 'unread-marker': true, 'unread': unread }"
+						@click="toggle_unread()"
+						>•</div>
 				</div>
 				<div class="data">
 					<span class="date">{{date}}</span>
