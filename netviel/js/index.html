@@ -258,8 +258,8 @@ Vue.component('message', {
 				</a>
 			</div>
 			<template v-if="!folded">
-			<iframe v-if="isHTML" class="content" @load="resize" ref="content" sandbox='allow-same-origin' :srcdoc="content"></iframe>
-			<div v-else class="content plain">{{content}}</div>
+				<iframe v-if="isHTML" class="content" @load="resize" ref="content" sandbox='allow-same-origin' :srcdoc="content"></iframe>
+				<div v-else class="content plain">{{content}}</div>
 			</template>
 			<br>
 		</div>
