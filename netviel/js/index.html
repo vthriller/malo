@@ -460,9 +460,6 @@ let NetViel = Vue.component('netviel', {
 	},
 	methods: {
 		update: function() {
-			if(!this.thread_id) {
-				this.search();
-			}
 		},
 		change_page: function(p) {
 			this.$router.push({
@@ -488,28 +485,6 @@ let NetViel = Vue.component('netviel', {
 						page: 1, // also go to the first page
 					},
 				});
-		},
-		search: function() {
-			this.results = null;
-			if(!this.query) {
-				return;
-			}
-
-			let self = this;
-			fetch('/api/query?q=' + encodeURIComponent(this.query) + '&page=' + this.page)
-			.then((resp) => {
-				if(!resp.ok)
-					throw new Error(resp.statusText);
-
-				return resp.json();
-			})
-			.catch(function(err) {
-				console.error(err);
-				// TODO
-			})
-			.then(function(data) {
-				self.results = data;
-			});
 		},
 		goto_thread: function(id) {
 			this.$router.push({
