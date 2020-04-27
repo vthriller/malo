@@ -50,21 +50,21 @@ td.subject > span,
 	margin-top: 1px;
 }
 
-.tags {
+.results .tags {
 	float: left;
 }
-.tags > span {
+.results .tags > span {
 	cursor: pointer;
 	display: flex;
 }
-.tags .name {
+.results .tags .name {
 	flex-grow: 1;
 	padding-right: 1em;
 }
-.tags .total {
+.results .tags .total {
 	display: inline-block;
 }
-.tags .unread {
+.results .tags .unread {
 	color: var(--unread);
 }
 
@@ -372,7 +372,7 @@ let NetViel = Vue.component('netviel', {
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 			</div>
 
-			<div v-show="!thread_id">
+			<div class="results" v-show="!thread_id">
 				<div class="pager" v-if="results && results.pages > 1">
 					<span
 						v-for="i in results.pages"
