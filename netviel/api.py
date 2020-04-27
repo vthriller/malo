@@ -287,34 +287,34 @@ def thread_to_json(thread):
         "total_messages": thread.get_total_messages(),
     }
 
-
 def message_to_json(message):
     """Converts a `notmuch.message.Message` instance to a JSON object."""
     with open(message.get_filename(), "rb") as f:
         email_msg = email.message_from_binary_file(f, policy=email.policy.default)
-    attachments = []
-    for part in email_msg.walk():
-        if part.get_content_maintype() == "multipart":
-            continue
-        if part.get_content_disposition() == "attachment":
-            attachments.append(
-                {
-                    "filename": part.get_filename(),
-                    "content_type": part.get_content_type(),
-                }
+    if True:
+        attachments = []
+        for part in email_msg.walk():
+            if part.get_content_maintype() == "multipart":
+                continue
+            if part.get_content_disposition() == "attachment":
+                attachments.append(
+                    {
+                        "filename": part.get_filename(),
+                        "content_type": part.get_content_type(),
+                    }
+                )
+        msg_body = email_msg.get_body(preferencelist=("html", "plain"))
+        content_type = msg_body.get_content_type()
+        if content_type == "text/html":
+            content = bleach.clean(
+                msg_body.get_content(),
+                tags=ALLOWED_TAGS,
+                attributes=ALLOWED_ATTRIBUTES,
+                styles=ALLOWED_STYLES,
+                strip=True,
             )
-    msg_body = email_msg.get_body(preferencelist=("html", "plain"))
-    content_type = msg_body.get_content_type()
-    if content_type == "text/html":
-        content = bleach.clean(
-            msg_body.get_content(),
-            tags=ALLOWED_TAGS,
-            attributes=ALLOWED_ATTRIBUTES,
-            styles=ALLOWED_STYLES,
-            strip=True,
-        )
-    else:
-        content = msg_body.get_content()
+        else:
+            content = msg_body.get_content()
     return {
         "from": email_msg["From"],
         "to": email_msg["To"],
