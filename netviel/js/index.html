@@ -290,6 +290,7 @@ Vue.component('thread', {
 	},
 	watch: {
 		$route: function(to, from) {
+			this.thread = null; // show loading indicator
 			this.fetch_thread();
 		},
 	},
