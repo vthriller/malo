@@ -101,6 +101,7 @@ td.subject > span,
 .message .meta .toggles {
 	flex-shrink: 1;
 	margin: 0 .5ex;
+	text-align: center;
 }
 
 .message .subject {
@@ -113,7 +114,8 @@ td.subject > span,
 	clear: right;
 }
 
-.message .unread-marker {
+.message .unread-marker,
+.message .fold-marker {
 	cursor: pointer;
 }
 
@@ -170,6 +172,7 @@ Vue.component('message', {
 		// TODO? watch this.tags
 		return {
 			tags_local: this.tags,
+			folded: false,
 		}
 	},
 	computed: {
@@ -209,6 +212,10 @@ Vue.component('message', {
 		<div class="message">
 			<div class="meta">
 				<div class="toggles">
+					<div class="fold-marker" @click="folded = !folded">
+						 <template v-if="!folded">[−]</template>
+						 <template v-else        >[+]</template>
+					</div>
 					<div
 						:class="{ 'unread-marker': true, 'unread': unread }"
 						@click="toggle_unread()"
@@ -239,7 +246,7 @@ Vue.component('message', {
 					</template>
 				</div>
 			</div>
-			<div class="attachments">
+			<div v-if="!folded" class="attachments">
 				<a
 					v-for="(att, idx) in attachments"
 					:href="\`/api/attachment/\${message_id}/\${idx}\`"
@@ -250,8 +257,10 @@ Vue.component('message', {
 					&#x1F4CE;&nbsp;{{ att.filename }}
 				</a>
 			</div>
+			<template v-if="!folded">
 			<iframe v-if="isHTML" class="content" @load="resize" ref="content" sandbox='allow-same-origin' :srcdoc="content"></iframe>
 			<div v-else class="content plain">{{content}}</div>
+			</template>
 			<br>
 		</div>
 	`,
