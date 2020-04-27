@@ -219,7 +219,7 @@ Vue.component('message', {
 				// TODO
 			})
 			.then(function(data) {
-				self.tags_local = data;
+				self.$emit('update-tags', data);
 			});
 		},
 	},
@@ -323,7 +323,7 @@ Vue.component('thread', {
 			</div>
 
 			<template v-if="thread">
-				<message v-for="m in thread" v-bind="m"></message>
+				<message v-for="m in thread" v-bind="m" @update-tags="function(tags) { m.tags = tags }"></message>
 			</template>
 		</div>
 	`,
