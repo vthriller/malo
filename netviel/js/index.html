@@ -340,22 +340,6 @@ Vue.component('search', {
 				},
 			});
 		},
-		update_query: function() {
-			// (re)load query results unconditionally when enter is pressed
-			this.results = null;
-
-			if(this.$route.query.q == this.query && this.$route.query.page == '1')
-				// force the update if neither query nor page didn't change
-				this.update();
-			else
-				this.$router.push({
-					name: 'main',
-					query: {
-						q: this.query,
-						page: 1, // also go to the first page
-					},
-				});
-		},
 		search: function() {
 			this.results = null;
 			if(!this.query) {
@@ -386,16 +370,6 @@ Vue.component('search', {
 					page: this.page,
 				},
 				params: { thread: id },
-			});
-		},
-		back: function() {
-			// update url
-			this.$router.push({
-				name: 'main',
-				query: {
-					q: this.query,
-					page: this.page,
-				},
 			});
 		},
 		format_time: function(t) {
