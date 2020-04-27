@@ -49,9 +49,17 @@ td.subject > span,
 	margin-right: .5ex;
 	margin-top: 1px;
 }
+.message .tags > span {
+	margin-left: .5ex;
+	margin-right: 0;
+}
 
 .results .tags {
 	float: left;
+}
+.message .tags {
+	float: right;
+	clear: right;
 }
 .results .tags > span {
 	cursor: pointer;
@@ -142,7 +150,7 @@ iframe {
 <script src="vue-router-3.1.6.js"></script>
 <script>
 Vue.component('message', {
-	props: 'date subject from to cc bcc content_type content attachments message_id'.split(' '),
+	props: 'date subject from to cc bcc content_type content attachments message_id tags'.split(' '),
 	computed: {
 		isHTML: function() {
 			return this.content_type == 'text/html'
@@ -158,6 +166,9 @@ Vue.component('message', {
 		<div class="message">
 			<div class="meta">
 				<span class="date">{{date}}</span>
+				<div class="tags">
+					<span v-for="t in tags">{{ t }}</span>
+				</div>
 				<span class="raw"><a :href="\`/api/message/\${message_id}\`">raw</a></span>
 				<span class="subject">{{subject}}</span>
 				<template v-if="from">
