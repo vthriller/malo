@@ -459,7 +459,6 @@ let NetViel = Vue.component('netviel', {
 	data: function() {
 		return {
 			query: this.$route.query.q,
-			page: this.$route.query.page || 1,
 
 			thread_id: this.$route.params.thread,
 		};
@@ -467,7 +466,6 @@ let NetViel = Vue.component('netviel', {
 	watch: {
 		$route: function(to, from) {
 			this.query = to.query.q;
-			this.page = to.query.page || 1;
 			this.thread_id = to.params.thread;
 		},
 	},
@@ -496,7 +494,7 @@ let NetViel = Vue.component('netviel', {
 				name: 'main',
 				query: {
 					q: this.query,
-					page: this.page,
+					page: this.$route.query.page,
 				},
 			});
 		},
