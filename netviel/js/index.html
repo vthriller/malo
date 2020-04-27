@@ -180,28 +180,28 @@ Vue.component('message', {
 					<div :class="{ 'unread-marker': true, 'unread': tags.indexOf('unread') != -1 }">•</div>
 				</div>
 				<div class="data">
-				<span class="date">{{date}}</span>
-				<div class="tags">
-					<span v-for="t in tags" v-if="t != 'unread'">{{ t }}</span>
-				</div>
-				<span class="raw"><a :href="\`/api/message/\${message_id}\`">raw</a></span>
-				<span class="subject">{{subject}}</span>
-				<template v-if="from">
-					<br>
-					From: {{from}}
-				</template>
-				<template v-if="to">
-					<br>
-					To: {{to}}
-				</template>
-				<template v-if="cc">
-					<br>
-					CC: {{cc}}
-				</template>
-				<template v-if="bcc">
-					<br>
-					BCC: {{bcc}}
-				</template>
+					<span class="date">{{date}}</span>
+					<div class="tags">
+						<span v-for="t in tags" v-if="t != 'unread'">{{ t }}</span>
+					</div>
+					<span class="raw"><a :href="\`/api/message/\${message_id}\`">raw</a></span>
+					<span class="subject">{{subject}}</span>
+					<template v-if="from">
+						<br>
+						From: {{from}}
+					</template>
+					<template v-if="to">
+						<br>
+						To: {{to}}
+					</template>
+					<template v-if="cc">
+						<br>
+						CC: {{cc}}
+					</template>
+					<template v-if="bcc">
+						<br>
+						BCC: {{bcc}}
+					</template>
 				</div>
 			</div>
 			<div class="attachments">
