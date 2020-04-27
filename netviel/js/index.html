@@ -323,9 +323,6 @@ Vue.component('search', {
 		},
 	},
 	mounted: function() {
-		Vue.nextTick(() => {
-			this.$refs.query.focus();
-		});
 		this.update();
 	},
 	methods: {
@@ -422,16 +419,10 @@ Vue.component('search', {
 		append_tag: function(t, event) {
 			let op = event.ctrlKey ? 'not' : 'and';
 			this.query = this.query.replace(/ *$/, ` ${op} tag:${t}`);
-			this.$refs.query.focus();
 		},
 	},
 	template: `
 		<div>
-			<div class="searchbar">
-				<button class="back" :disabled="!thread_id" @click="back">←</button>
-				<input v-model="query" ref="query" @keyup.enter="update_query">
-			</div>
-
 			<div class="results" v-show="!thread_id">
 				<div class="pager" v-if="results && results.pages > 1">
 					<span
