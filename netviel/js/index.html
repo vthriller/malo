@@ -301,7 +301,7 @@ Vue.component('thread', {
 	methods: {
 		fetch_thread: function() {
 			let self = this;
-			fetch('/api/thread/thread:' + encodeURIComponent(this.id))
+			fetch('/api/thread/' + encodeURIComponent(this.id))
 			.then((resp) => {
 				if(!resp.ok)
 					throw new Error(resp.statusText);
@@ -411,7 +411,17 @@ Vue.component('search', {
 					q: this.query,
 					page: this.page,
 				},
-				params: { thread: id },
+				params: { thread: 'thread:' + id },
+			});
+		},
+		goto_message: function(id) {
+			this.$router.push({
+				name: 'thread',
+				query: {
+					q: this.query,
+					page: this.page,
+				},
+				params: { thread: 'mid:' + id },
 			});
 		},
 		format_time: function(t) {
@@ -486,8 +496,9 @@ Vue.component('search', {
 				<table v-if="results && what == 'messages'">
 					<tr
 						v-for="res in results.messages"
-						:key="res.thread_id">
-						<!-- TODO: highlight, goto_message -->
+						:key="res.thread_id"
+						@click="goto_message(res.message_id)">
+						<!-- TODO: highlight -->
 						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
 						<td>{{ res.from }}</td>
 						<td class="subject">
