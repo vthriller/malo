@@ -319,8 +319,6 @@ let NetViel = Vue.component('netviel', {
 			this.query = to.query.q;
 			this.page = to.query.page || 1;
 			this.thread_id = to.params.thread;
-			if(from.query.q != to.query.q || from.query.page != to.query.page)
-				this.results = null;
 			this.update();
 		},
 	},
@@ -332,7 +330,7 @@ let NetViel = Vue.component('netviel', {
 	},
 	methods: {
 		update: function() {
-			if(!this.thread_id && !this.results) {
+			if(!this.thread_id) {
 				this.search();
 			}
 		},
@@ -362,8 +360,8 @@ let NetViel = Vue.component('netviel', {
 				});
 		},
 		search: function() {
+			this.results = null;
 			if(!this.query) {
-				this.results = null;
 				return;
 			}
 
