@@ -227,6 +227,15 @@ def create_app():
         return send_file(f, mimetype=d["content_type"])
 
     @app.route("/api/message/<string:message_id>")
+    def fetch_message(message_id):
+        msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
+        try:
+            msg = next(msgs)  # there can be only 1
+        except StopIteration:
+            return 'Not found', 404
+        return message_to_json(msg)
+
+    @app.route("/api/message/<string:message_id>/raw")
     def download_message(message_id):
         msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
         try:

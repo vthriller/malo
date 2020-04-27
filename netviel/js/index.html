@@ -184,7 +184,7 @@ Vue.component('message', {
 					<div class="tags">
 						<span v-for="t in tags" v-if="t != 'unread'">{{ t }}</span>
 					</div>
-					<span class="raw"><a :href="\`/api/message/\${message_id}\`">raw</a></span>
+					<span class="raw"><a :href="\`/api/message/\${message_id}/raw\`">raw</a></span>
 					<span class="subject">{{subject}}</span>
 					<template v-if="from">
 						<br>
