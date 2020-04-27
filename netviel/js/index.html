@@ -478,7 +478,7 @@ let NetViel = Vue.component('netviel', {
 		update_query: function() {
 			if(this.$route.query.q == this.query && this.$route.query.page == '1') {
 				// force the update if neither query nor page didn't change
-				// TODO
+				this.$refs.search.search();
 			} else
 				this.$router.push({
 					name: 'main',
@@ -511,6 +511,7 @@ let NetViel = Vue.component('netviel', {
 			</div>
 
 			<search
+				ref="search"
 				:class="{ 'compact': thread_id }"
 				:query="this.$route.query.q"
 				:page="this.$route.query.page || 1"
