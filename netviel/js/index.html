@@ -448,18 +448,14 @@ let NetViel = Vue.component('netviel', {
 			this.query = to.query.q;
 			this.page = to.query.page || 1;
 			this.thread_id = to.params.thread;
-			this.update();
 		},
 	},
 	mounted: function() {
 		Vue.nextTick(() => {
 			this.$refs.query.focus();
 		});
-		this.update();
 	},
 	methods: {
-		update: function() {
-		},
 		change_page: function(p) {
 			this.$router.push({
 				name: 'main',
@@ -470,10 +466,10 @@ let NetViel = Vue.component('netviel', {
 			});
 		},
 		update_query: function() {
-			if(this.$route.query.q == this.query && this.$route.query.page == '1')
+			if(this.$route.query.q == this.query && this.$route.query.page == '1') {
 				// force the update if neither query nor page didn't change
-				this.update();
-			else
+				// TODO
+			} else
 				this.$router.push({
 					name: 'main',
 					query: {
