@@ -475,7 +475,7 @@ Vue.component('search', {
 					<tr
 						v-for="res in results.threads"
 						:key="res.thread_id"
-						:class="{ highlight: res.thread_id == highlight }"
+						:class="{ highlight: 'thread:' + res.thread_id == highlight }"
 						@click="goto_thread(res.thread_id)">
 						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
 						<td>{{ res.authors }}</td>
@@ -497,8 +497,8 @@ Vue.component('search', {
 					<tr
 						v-for="res in results.messages"
 						:key="res.thread_id"
+						:class="{ highlight: 'mid:' + res.message_id == highlight }"
 						@click="goto_message(res.message_id)">
-						<!-- TODO: highlight -->
 						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
 						<td>{{ res.from }}</td>
 						<td class="subject">
