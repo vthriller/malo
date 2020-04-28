@@ -215,7 +215,9 @@ Vue.component('message', {
 	methods: {
 		resize: function() {
 			let c = this.$refs.content;
-			c.style.height = c.contentWindow.document.documentElement.scrollHeight + 'px';
+			let h = c.contentWindow.document.documentElement.scrollHeight;
+			h += 32; // reserve extra space for horizontal scrollbar to avoid vertical scrollbar
+			c.style.height = h + 'px';
 		},
 		toggle_unread: function() {
 			let action = this.unread ? 'remove' : 'add';
