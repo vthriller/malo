@@ -214,8 +214,9 @@ def create_app():
     api.add_resource(Query, "/api/query")
     api.add_resource(Thread, "/api/thread/<string:query>") # usually thread:012abcdef or mid:20200102@example.com
 
-    @app.route("/api/attachment/<string:message_id>/<int:num>")
-    def download_attachment(message_id, num):
+    @app.route("/api/attachment/<string:message_id>/<int:num>/<string:filename>")
+    def download_attachment(message_id, num, filename):
+        # filename is unused, only added to url to name saved files appropriately
         msgs = notmuch.Query(get_db(), "mid:{}".format(message_id)).search_messages()
         try:
             msg = next(msgs)  # there can be only 1

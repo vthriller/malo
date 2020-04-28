@@ -278,7 +278,7 @@ Vue.component('message', {
 			<div v-if="!folded" class="attachments">
 				<a
 					v-for="(att, idx) in attachments"
-					:href="\`/api/attachment/\${message_id}/\${idx}\`"
+					:href="\`/api/attachment/\${message_id}/\${idx}/\${encodeURIComponent(att.filename)}\`"
 					v-if="att.filename"
 					:title="att.filename"
 					>
