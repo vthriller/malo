@@ -331,6 +331,24 @@ Vue.component('thread', {
 				self.thread = data;
 			});
 		},
+		/*
+		vue doesn't like inline for loops for some reason
+		> Error compiling template: avoid using JavaScript keyword as property name: "for"
+		> Raw expression: @click="for(m of $refs.messages) { m.folded = true; }"
+		*/
+		unfold_all: function() {
+			for(m of this.$refs.messages)
+				m.folded = false;
+		},
+		fold_all: function() {
+			for(m of this.$refs.messages)
+				m.folded = true;
+		},
+		fold_read: function() {
+			for(m of this.$refs.messages)
+				if(m.tags.indexOf('unread') == -1)
+					m.folded = true;
+		},
 	},
 	computed: {
 		all_tags: function() {
@@ -351,9 +369,9 @@ Vue.component('thread', {
 			</div>
 
 			<template v-if="thread">
-				<button @click="for(m of $refs.messages) { m.folded = false; }">unfold all</button>
-				<button @click="for(m of $refs.messages) { m.folded = true; }">fold all</button>
-				<button @click="for(m of $refs.messages) { if(m.tags.indexOf('unread') == -1) m.folded = true; }">fold read</button>
+				<button @click="unfold_all">unfold all</button>
+				<button @click="fold_all">fold all</button>
+				<button @click="fold_read">fold read</button>
 				<message v-for="m in thread" v-bind="m" ref="messages" @update-tags="function(tags) { m.tags = tags; $emit('update-tags', all_tags) }"></message>
 			</template>
 		</div>
