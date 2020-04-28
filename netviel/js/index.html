@@ -349,7 +349,10 @@ Vue.component('thread', {
 			</div>
 
 			<template v-if="thread">
-				<message v-for="m in thread" v-bind="m" @update-tags="function(tags) { m.tags = tags; $emit('update-tags', all_tags) }"></message>
+				<button @click="for(m of $refs.messages) { m.folded = false; }">unfold all</button>
+				<button @click="for(m of $refs.messages) { m.folded = true; }">fold all</button>
+				<button @click="for(m of $refs.messages) { if(m.tags.indexOf('unread') == -1) m.folded = true; }">fold read</button>
+				<message v-for="m in thread" v-bind="m" ref="messages" @update-tags="function(tags) { m.tags = tags; $emit('update-tags', all_tags) }"></message>
 			</template>
 		</div>
 	`,
