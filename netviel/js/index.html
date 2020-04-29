@@ -204,7 +204,7 @@ iframe {
 <script src="vue-router-3.1.6.js"></script>
 <script>
 Vue.component('message', {
-	props: 'date subject from to cc bcc content_type content attachments message_id tags'.split(' '),
+	props: 'time_raw subject from to cc bcc content_type content attachments message_id tags'.split(' '),
 	data: function() {
 		return {
 			folded: this.tags.indexOf('unread') == -1,
@@ -265,7 +265,7 @@ Vue.component('message', {
 						>•</div>
 				</div>
 				<div class="data">
-					<span class="date">{{date}}</span>
+					<span class="date">{{time_raw}}</span>
 					<div class="tags">
 						<span v-for="t in tags" v-if="t != 'unread'">{{ t }}</span>
 					</div>
@@ -568,7 +568,7 @@ Vue.component('search', {
 								>{{ tag }}</span>
 							{{ res.subject }}
 						</td>
-						<td>{{ format_time(res.timestamp) }}</td>
+						<td>{{ format_time(res.time) }}</td>
 					</tr>
 				</table>
 			</div>
