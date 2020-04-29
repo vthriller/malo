@@ -2,6 +2,7 @@
 
 import email
 import email.policy
+import email.utils
 import io
 import logging
 import os
@@ -323,6 +324,7 @@ def message_to_json(message, skip_content=False):
             content = msg_body.get_content()
     return {
         "from": email_msg["From"],
+        "from_name_addr": email.utils.parseaddr(email_msg["From"]),
         "to": email_msg["To"],
         "cc": email_msg["CC"],
         "bcc": email_msg["BCC"],

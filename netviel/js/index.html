@@ -559,7 +559,7 @@ Vue.component('search', {
 						:class="{ highlight: 'mid:' + res.message_id == highlight }"
 						@click="goto_message(res.message_id)">
 						<td :class="{ 'unread-marker': true, 'unread': res.tags.indexOf('unread') != -1}">•</td>
-						<td>{{ res.from }}</td>
+						<td>{{ res.from_name_addr[0] || res.from_name_addr[1] }}</td>
 						<td class="subject">
 							<span
 								v-for="tag in res.tags"
