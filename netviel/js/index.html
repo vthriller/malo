@@ -331,6 +331,16 @@ Vue.component('thread', {
 				self.thread = data;
 			});
 		},
+		close: function() {
+			// update url
+			this.$router.push({
+				name: 'main',
+				query: {
+					q: this.$route.query.q,
+					page: this.$route.query.page,
+				},
+			});
+		},
 		/*
 		vue doesn't like inline for loops for some reason
 		> Error compiling template: avoid using JavaScript keyword as property name: "for"
@@ -369,6 +379,7 @@ Vue.component('thread', {
 			</div>
 
 			<template v-if="thread">
+				<button @click="close">x</button>
 				<button @click="unfold_all">unfold all</button>
 				<button @click="fold_all">fold all</button>
 				<button @click="fold_read">fold read</button>
@@ -588,16 +599,6 @@ let NetViel = Vue.component('netviel', {
 					},
 				});
 		},
-		back: function() {
-			// update url
-			this.$router.push({
-				name: 'main',
-				query: {
-					q: this.query,
-					page: this.$route.query.page,
-				},
-			});
-		},
 		query_append: function(tail) {
 			this.query = this.query.replace(/ *$/, tail);
 			this.$refs.query.focus();
@@ -606,7 +607,6 @@ let NetViel = Vue.component('netviel', {
 	template: `
 		<div>
 			<div class="searchbar">
-				<button class="back" :disabled="!thread_query" @click="back">←</button>
 				<input v-model="query" ref="query" @keyup.enter="update_query">
 				<label><input type="radio" v-model="what" value="threads"> threads</label>
 				<label><input type="radio" v-model="what" value="messages"> messages</label>
