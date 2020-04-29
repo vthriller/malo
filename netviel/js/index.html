@@ -432,14 +432,42 @@ Vue.component('search', {
 				},
 			});
 		},
-		update_tags: function(thread, tags) {
+		update_tags: function(thread_query, tags) {
 			if(!this.results) return;
-			for(let t of this.results.threads) {
-				if(t.thread_id == thread) {
-					t.tags = tags;
+
+			if(this.what == 'threads') {
+				if(!thread_query.startsWith('thread:')) {
+					// trying to update non-thread in thread search
+					// this is fine: you can open single message and switch to thread search
+					// TODO update flags through subscription to a stream of updates that come directly from the server
 					return;
 				}
+				let id = thread_query.replace(/^thread:/, '');
+
+				for(let t of this.results.threads) {
+					if(t.thread_id == id) {
+						t.tags = tags;
+						return;
+					}
+				}
 			}
+
+			if(this.what == 'messages') {
+				if(!thread_query.startsWith('mid:')) {
+					// trying to update non-message in message search
+					return;
+				}
+				let id = thread_query.replace(/^mid:/, '');
+
+				for(let m of this.results.messages) {
+					if(m.message_id == id) {
+						m.tags = tags;
+						return;
+					}
+				}
+			}
+
+			//console.error('trying to update tags in unknown mode');
 		},
 		reload: function() {
 			this.results = null;
