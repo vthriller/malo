@@ -329,6 +329,7 @@ def message_to_json(message, skip_content=False):
         "cc": email_msg["CC"],
         "bcc": email_msg["BCC"],
         "date": email_msg["Date"],
+        "timestamp": email.utils.parsedate_to_datetime(email_msg["Date"]).timestamp(),
         "subject": email_msg["Subject"],
         "content": content if not skip_content else None,
         "content_type": content_type if not skip_content else None,
