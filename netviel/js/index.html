@@ -17,8 +17,20 @@ body {
 .searchbar {
 	display: flex;
 }
-.searchbar input {
+.searchbar input:not([type]) {
 	flex-grow: 1;
+}
+
+.searchbar input[type=radio] {
+	display: none;
+}
+.searchbar label {
+	display: inline-block;
+	border: 1px solid #ccc;
+	padding: .5ex;
+}
+.searchbar input[type=radio]:checked + label {
+	background-color: #fe5;
 }
 
 table {
@@ -608,8 +620,8 @@ let NetViel = Vue.component('netviel', {
 		<div>
 			<div class="searchbar">
 				<input v-model="query" ref="query" @keyup.enter="update_query">
-				<label><input type="radio" v-model="what" value="threads"> threads</label>
-				<label><input type="radio" v-model="what" value="messages"> messages</label>
+				<input type="radio" v-model="what" value="threads"  id="what-threads">  <label for="what-threads">threads</label>
+				<input type="radio" v-model="what" value="messages" id="what-messages"> <label for="what-messages">messages</label>
 			</div>
 
 			<search
