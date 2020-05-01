@@ -635,9 +635,7 @@ let NetViel = Vue.component('netviel', {
 		},
 	},
 	mounted: function() {
-		Vue.nextTick(() => {
-			this.$refs.query.focus();
-		});
+		document.onkeypress = this.onkeypress;
 	},
 	methods: {
 		update_query: function() {
@@ -656,6 +654,24 @@ let NetViel = Vue.component('netviel', {
 		query_append: function(tail) {
 			this.query = this.query.replace(/ *$/, tail);
 			this.$refs.query.focus();
+		},
+		onkeypress: function(ev) {
+			let key =
+				(ev.ctrlKey ? 'ctrl-' : '') +
+				(ev.altKey ? 'alt-' : '') +
+				(ev.shiftKey ? 'shift-' : '') +
+				ev.key.toLowerCase();
+
+			if(document.activeElement == this.$refs.query) {
+				// input mode
+				return;
+			}
+
+			if(key == '/') {
+				this.$refs.query.focus();
+				ev.preventDefault();
+				return;
+			}
 		},
 	},
 	template: `
