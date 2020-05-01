@@ -204,6 +204,41 @@ iframe {
 .pager span.current {
 	background-color: #ff0
 }
+
+.shortcuts {
+	position: absolute;
+	top: 5%;
+	left: 5%;
+	right: 5%;
+
+	border: 1px solid black;
+	background: white;
+	padding: 1em;
+
+	text-align: center;
+}
+
+.shortcuts > div {
+	display: inline-block;
+	vertical-align: top;
+	text-align: left;
+}
+
+kbd {
+	display: inline-block;
+
+	text-align: center;
+	min-width: 1em;
+	padding: 0.5px .5ex;
+	margin-top: 1px;
+
+	background-color: #ccc;
+	border-top: 2px solid #d8d8d8;
+	border-left: 2px solid #d8d8d8;
+	border-bottom: 2px solid #aaa;
+	border-right: 2px solid #aaa;
+	border-radius: 2px;
+}
 </style>
 <body><div id="vue">
 	<router-view></router-view>
@@ -670,6 +705,8 @@ let NetViel = Vue.component('netviel', {
 		return {
 			query: this.$route.query.q,
 			what: 'threads',
+
+			show_shortcuts: false,
 		};
 	},
 	watch: {
@@ -730,12 +767,33 @@ let NetViel = Vue.component('netviel', {
 				ev.preventDefault();
 				return;
 			}
+			if(key == 'shift-?') {
+				this.show_shortcuts = !this.show_shortcuts;
+				ev.preventDefault();
+				return;
+			}
 
 			this.$refs.search.onkeypress(ev, key);
 		},
 	},
 	template: `
 		<div>
+			<div v-show="show_shortcuts" class="shortcuts">
+				<div><kbd>?</kbd> show/hide this help</div>
+				<hr>
+				<div>
+					<b>Search bar</b>
+					<div><kbd>/</kbd> enter the bar</div>
+					<div><kbd>Esc</kbd> leave the bar</div>
+					<div><kbd>↵<!-- ⏎ --></kbd> perform the search</div>
+				</div>
+				<div>
+					<b>Search results</b>
+					<div><kbd>↑</kbd>, <kbd>↓</kbd> select message/thread</div>
+					<div><kbd>↵<!-- ⏎ --></kbd> open selection</div>
+				</div>
+			</div>
+
 			<div class="searchbar">
 				<input v-model="query" ref="query">
 				<input type="radio" v-model="what" value="threads"  id="what-threads">  <label for="what-threads">threads</label>
