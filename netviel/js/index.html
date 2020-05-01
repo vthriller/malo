@@ -493,20 +493,20 @@ Vue.component('search', {
 		update_tags: function(thread_query, tags) {
 			if(!this.results) return;
 
-				if(!thread_query.startsWith(this.thread_prefix)) {
-					// trying to update non-thread in thread search, or non-message in message search
-					// this is fine: you can open single message and switch to thread search
-					// TODO update flags through subscription to a stream of updates that come directly from the server
+			if(!thread_query.startsWith(this.thread_prefix)) {
+				// trying to update non-thread in thread search, or non-message in message search
+				// this is fine: you can open single message and switch to thread search
+				// TODO update flags through subscription to a stream of updates that come directly from the server
+				return;
+			}
+			let id = thread_query.substring(this.thread_prefix.length);
+
+			for(let t of this.results.items) {
+				if(t.id == id) {
+					t.tags = tags;
 					return;
 				}
-				let id = thread_query.substring(this.thread_prefix.length);
-
-				for(let t of this.results.items) {
-					if(t.id == id) {
-						t.tags = tags;
-						return;
-					}
-				}
+			}
 
 			//console.error('trying to update tags in unknown mode');
 		},
