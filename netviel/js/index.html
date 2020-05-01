@@ -692,8 +692,8 @@ Vue.component('search', {
 						<td v-if="what == 'threads'">{{ res.matched_messages }}/{{ res.total_messages }}</td>
 
 						<template v-if="what == 'threads'">
-						<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
-						<td v-else>{{ format_time(res.oldest_date) }}</td>
+							<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
+							<td v-else>{{ format_time(res.oldest_date) }}</td>
 						</template>
 
 						<td v-if="what == 'messages'">{{ format_time(res.time) }}</td>
