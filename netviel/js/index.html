@@ -668,6 +668,12 @@ let NetViel = Vue.component('netviel', {
 					document.activeElement.blur();
 					ev.preventDefault();
 				}
+				if(key == 'enter') {
+					document.activeElement.blur();
+					ev.preventDefault();
+
+					this.update_query();
+				}
 				return;
 			}
 
@@ -681,7 +687,7 @@ let NetViel = Vue.component('netviel', {
 	template: `
 		<div>
 			<div class="searchbar">
-				<input v-model="query" ref="query" @keyup.enter="update_query">
+				<input v-model="query" ref="query">
 				<input type="radio" v-model="what" value="threads"  id="what-threads">  <label for="what-threads">threads</label>
 				<input type="radio" v-model="what" value="messages" id="what-messages"> <label for="what-messages">messages</label>
 			</div>
