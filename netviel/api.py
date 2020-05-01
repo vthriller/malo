@@ -136,20 +136,20 @@ def create_app():
 
             query = notmuch.Query(get_db(), query_string)
             if what == 'threads':
-                threads = iter(query.search_threads())
+                items = iter(query.search_threads())
             elif what == 'messages':
-                threads = iter(query.search_messages())
+                items = iter(query.search_messages())
             else:
                 return 'Bad request', 400
 
-            # N.B. cannot process pages declaratively via zip(threads, range(…))
+            # N.B. cannot process pages declaratively via zip(items, range(…))
             # due to notmuch.errors.NotInitializedError being raised after first StopIteration
 
             for _ in range((page - 1) * per_page):
                 # before current page
-                try: t = next(threads)
+                try: t = next(items)
                 except StopIteration:
-                    threads = iter([]) # to prevent NotInitializedError
+                    items = iter([]) # to prevent NotInitializedError
                     break
 
                 count += 1
@@ -163,9 +163,9 @@ def create_app():
             current = []
             for _ in range(per_page):
                 # current page
-                try: t = next(threads)
+                try: t = next(items)
                 except StopIteration:
-                    threads = iter([]) # to prevent NotInitializedError
+                    items = iter([]) # to prevent NotInitializedError
                     break
 
                 count += 1
@@ -180,7 +180,7 @@ def create_app():
 
             while True:
                 # after current page
-                try: t = next(threads)
+                try: t = next(items)
                 except StopIteration:
                     break
 
