@@ -703,7 +703,7 @@ Vue.component('search', {
 	`,
 });
 
-let NetViel = Vue.component('netviel', {
+let Malo = Vue.component('malo', {
 	data: function() {
 		return {
 			query: this.$route.query.q,
@@ -821,8 +821,8 @@ let NetViel = Vue.component('netviel', {
 
 const router = new VueRouter({
 	routes: [
-		{ name: 'main', path: '/', component: NetViel },
-		{ name: 'thread', path: '/:thread', component: NetViel },
+		{ name: 'main', path: '/', component: Malo },
+		{ name: 'thread', path: '/:thread', component: Malo },
 	]
 });
 

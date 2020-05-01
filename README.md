@@ -1,13 +1,17 @@
-# net viel
+# Malo
 
-net viel [nɛt fiːl] ([Swabian](https://en.wikipedia.org/wiki/Swabian_German) for "not much") allows searching through an e-mail archive indexed with [`notmuch`](https://notmuchmail.org/) from a browser.
+Malo (or мало, which means "a little", "a few", "a bit", "some" in a number of slavic languages) allows searching through an e-mail archive indexed with [`notmuch`](https://notmuchmail.org/) from a browser.
 
-The original idea (of which it falls way short) was to search e-mails in a local Maildir with the convenience of a GMail-like interface.
+Malo started as a fork of [net viel](https://github.com/DavidMStraub/netviel).
+
+Malo is a work in progress.
 
 ## Installation
 
+Malo is not currently present in PyPI, so you'll need to clone this repository first.
+
 ```
-python3 -m pip install netviel --user
+python3 -m pip install . --user
 ```
 
 ## Requirements
@@ -24,10 +28,10 @@ Python 3.6 or above is required.
 
 The web interface accessing your local `notmuch` database is opened simply with
 ```
-python3 -m netviel
+python3 -m malo
 ```
 The Flask default port 5000 can be changed with the `--ports` option.
 
-**:warning: net viel is meant for *local* use only. Do *not* expose this to the Internet as-is. Bad things will happen! :warning:**
+**:warning: malo is meant for *local* use only. Do *not* expose this to the Internet as-is. Bad things will happen! :warning:**
 
 

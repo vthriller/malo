@@ -4,7 +4,7 @@ from .api import create_app
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run the netviel app locally")
+    parser = argparse.ArgumentParser(description="Run the malo app locally")
     parser.add_argument(
         "--port", type=int, help="Port to use (defaults to 5000)", default=5000
     )
