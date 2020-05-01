@@ -469,6 +469,14 @@ Vue.component('search', {
 			this.reload();
 		},
 	},
+	computed: {
+		thread_prefix: function() {
+			if(this.what == 'threads')
+				return 'thread:';
+			if(this.what == 'messages')
+				return 'mid:';
+		},
+	},
 	mounted: function() {
 		this.reload();
 	},
@@ -486,13 +494,13 @@ Vue.component('search', {
 			if(!this.results) return;
 
 			if(this.what == 'threads') {
-				if(!thread_query.startsWith('thread:')) {
+				if(!thread_query.startsWith(this.thread_prefix)) {
 					// trying to update non-thread in thread search
 					// this is fine: you can open single message and switch to thread search
 					// TODO update flags through subscription to a stream of updates that come directly from the server
 					return;
 				}
-				let id = thread_query.replace(/^thread:/, '');
+				let id = thread_query.substring(this.thread_prefix.length);
 
 				for(let t of this.results.items) {
 					if(t.id == id) {
@@ -503,11 +511,11 @@ Vue.component('search', {
 			}
 
 			if(this.what == 'messages') {
-				if(!thread_query.startsWith('mid:')) {
+				if(!thread_query.startsWith(this.thread_prefix)) {
 					// trying to update non-message in message search
 					return;
 				}
-				let id = thread_query.replace(/^mid:/, '');
+				let id = thread_query.substring(this.thread_prefix.length);
 
 				for(let m of this.results.items) {
 					if(m.id == id) {
@@ -608,9 +616,9 @@ Vue.component('search', {
 
 				var t;
 				if(this.what == 'threads')
-					t = 'thread:' + this.results.items[this.cursor].id;
+					t = this.thread_prefix + this.results.items[this.cursor].id;
 				if(this.what == 'messages')
-					t = 'mid:' + this.results.items[this.cursor].id;
+					t = this.thread_prefix + this.results.items[this.cursor].id;
 				this.$router.push({
 					name: 'thread',
 					query: {
@@ -686,11 +694,11 @@ Vue.component('search', {
 						v-for="res, idx in results.items"
 						:key="res.id"
 						:class="{
-							highlight: 'thread:' + res.id == highlight,
+							highlight: thread_prefix + res.id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
 							cursor: idx == cursor,
 						 }"
-						@click="cursor = idx; goto_thread('thread:' + res.id)">
+						@click="cursor = idx; goto_thread(thread_prefix + res.id)">
 						<td :class="{ 'unread-marker': true }">•</td>
 						<td>{{ res.authors }}</td>
 						<td class="subject">
@@ -712,11 +720,11 @@ Vue.component('search', {
 						v-for="res, idx in results.items"
 						:key="res.id"
 						:class="{
-							highlight: 'mid:' + res.id == highlight,
+							highlight: thread_prefix + res.id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
 							cursor: idx == cursor,
 						}"
-						@click="cursor = idx; goto_thread('mid:' + res.id)">
+						@click="cursor = idx; goto_thread(thread_prefix + res.id)">
 						<td :class="{ 'unread-marker': true }">•</td>
 						<td>{{ res.from_name_addr[0] || res.from_name_addr[1] }}</td>
 						<td class="subject">
