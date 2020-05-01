@@ -290,7 +290,7 @@ def thread_to_json(thread):
         "oldest_date": thread.get_oldest_date(),
         "subject": thread.get_subject(),
         "tags": list(thread.get_tags()),
-        "thread_id": thread.get_thread_id(),
+        "id": thread.get_thread_id(),
         "total_messages": thread.get_total_messages(),
     }
 

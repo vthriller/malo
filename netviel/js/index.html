@@ -495,7 +495,7 @@ Vue.component('search', {
 				let id = thread_query.replace(/^thread:/, '');
 
 				for(let t of this.results.threads) {
-					if(t.thread_id == id) {
+					if(t.id == id) {
 						t.tags = tags;
 						return;
 					}
@@ -608,7 +608,7 @@ Vue.component('search', {
 
 				var t;
 				if(this.what == 'threads')
-					t = 'thread:' + this.results.threads[this.cursor].thread_id;
+					t = 'thread:' + this.results.threads[this.cursor].id;
 				if(this.what == 'messages')
 					t = 'mid:' + this.results.messages[this.cursor].message_id;
 				this.$router.push({
@@ -684,13 +684,13 @@ Vue.component('search', {
 				<table v-if="results && what == 'threads'">
 					<tr
 						v-for="res, idx in results.threads"
-						:key="res.thread_id"
+						:key="res.id"
 						:class="{
-							highlight: 'thread:' + res.thread_id == highlight,
+							highlight: 'thread:' + res.id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
 							cursor: idx == cursor,
 						 }"
-						@click="cursor = idx; goto_thread('thread:' + res.thread_id)">
+						@click="cursor = idx; goto_thread('thread:' + res.id)">
 						<td :class="{ 'unread-marker': true }">•</td>
 						<td>{{ res.authors }}</td>
 						<td class="subject">
@@ -710,7 +710,7 @@ Vue.component('search', {
 				<table v-if="results && what == 'messages'">
 					<tr
 						v-for="res, idx in results.messages"
-						:key="res.thread_id"
+						:key="res.id"
 						:class="{
 							highlight: 'mid:' + res.message_id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
