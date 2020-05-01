@@ -570,6 +570,32 @@ Vue.component('search', {
 				ev.preventDefault();
 				return;
 			}
+			if(key == 'enter') {
+				if(!this.results)
+					// nothing to navigate
+					return;
+
+				if(this.cursor == null)
+					// nothing is selected
+					return;
+
+				var t;
+				if(this.what == 'threads')
+					t = 'thread:' + this.results.threads[this.cursor].thread_id;
+				if(this.what == 'messages')
+					t = 'mid:' + this.results.messages[this.cursor].message_id;
+				this.$router.push({
+					name: 'thread',
+					query: {
+						q: this.query,
+						page: this.page,
+					},
+					params: { thread: t },
+				});
+
+				ev.preventDefault();
+				return;
+			}
 		},
 	},
 	template: `
