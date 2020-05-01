@@ -617,6 +617,35 @@ Vue.component('search', {
 				ev.preventDefault();
 				return;
 			}
+
+			if(key == 'shift-<' || key == 'shift->') {
+				// create new object instead, otherwise router would not notice our changes to the query
+				let q = {};
+				for(let k of Object.keys(this.$route.query)) {
+					q[k] = this.$route.query[k];
+				}
+
+				let p = parseInt(q.page || 1);
+				if(key == 'shift-<') {
+					// already at the first page
+					if(p == 1) return;
+					q.page = p - 1;
+				}
+				if(key == 'shift->') {
+					// already at the first page
+					if(p == this.results.pages) return;
+					q.page = p + 1;
+				}
+
+				this.$router.push({
+					name: this.$route.name,
+					query: q,
+					params: this.$route.params,
+				});
+
+				ev.preventDefault();
+				return;
+			}
 		},
 	},
 	template: `
@@ -786,6 +815,7 @@ let NetViel = Vue.component('netviel', {
 				<div>
 					<b>Search results</b>
 					<div><kbd>↑</kbd>, <kbd>↓</kbd> select message/thread</div>
+					<div><kbd>&lt;</kbd>, <kbd>&gt;</kbd> switch to another page</div>
 					<div><kbd>↵<!-- ⏎ --></kbd> open selection</div>
 				</div>
 			</div>
