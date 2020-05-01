@@ -548,30 +548,23 @@ Vue.component('search', {
 					// nothing to navigate
 					return;
 
-				var rows, current, next;
+				var rows, next;
 				if(this.what == 'threads') {
 					rows = this.results.threads;
-					current = rows.findIndex((i) => i.thread_id == this.cursor);
 				}
 				if(this.what == 'messages') {
 					rows = this.results.messages;
-					current = rows.findIndex((i) => i.message_id == this.cursor);
 				}
-				if(current == -1) {
+				if(this.cursor == null) {
 					// no selected element, select first or last depending on the key
 					next = key == 'arrowdown' ? 0 : rows.length-1;
 				} else {
-					next = current + (key == 'arrowdown' ? 1 : -1);
+					next = this.cursor + (key == 'arrowdown' ? 1 : -1);
 					// wrap around
 					if(next < 0) next = rows.length-1;
 					if(next > rows.length-1) next = 0;
 				}
-				if(this.what == 'threads') {
-					this.cursor = rows[next].thread_id;
-				}
-				if(this.what == 'messages') {
-					this.cursor = rows[next].message_id;
-				}
+				this.cursor = next;
 
 				ev.preventDefault();
 				return;
@@ -604,12 +597,12 @@ Vue.component('search', {
 
 				<table v-if="results && what == 'threads'">
 					<tr
-						v-for="res in results.threads"
+						v-for="res, idx in results.threads"
 						:key="res.thread_id"
 						:class="{
 							highlight: 'thread:' + res.thread_id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
-							cursor: res.thread_id == cursor,
+							cursor: idx == cursor,
 						 }"
 						@click="goto_thread(res.thread_id)">
 						<td :class="{ 'unread-marker': true }">•</td>
@@ -630,12 +623,12 @@ Vue.component('search', {
 
 				<table v-if="results && what == 'messages'">
 					<tr
-						v-for="res in results.messages"
+						v-for="res, idx in results.messages"
 						:key="res.thread_id"
 						:class="{
 							highlight: 'mid:' + res.message_id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
-							cursor: res.message_id == cursor,
+							cursor: idx == cursor,
 						}"
 						@click="goto_message(res.message_id)">
 						<td :class="{ 'unread-marker': true }">•</td>
