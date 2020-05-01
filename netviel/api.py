@@ -123,96 +123,96 @@ def create_app():
 
     @app.route("/api/query")
     def query():
-            query_string = request.args['q']
-            page = int(request.args.get('page', '1'))
-            what = request.args.get('what', 'threads')
-            per_page = 50
+        query_string = request.args['q']
+        page = int(request.args.get('page', '1'))
+        what = request.args.get('what', 'threads')
+        per_page = 50
 
-            count = 0
-            tags = defaultdict(lambda: [0, 0])
+        count = 0
+        tags = defaultdict(lambda: [0, 0])
 
-            query = notmuch.Query(get_db(), query_string)
-            if what == 'threads':
-                items = iter(query.search_threads())
-            elif what == 'messages':
-                items = iter(query.search_messages())
-            else:
-                return 'Bad request', 400
+        query = notmuch.Query(get_db(), query_string)
+        if what == 'threads':
+            items = iter(query.search_threads())
+        elif what == 'messages':
+            items = iter(query.search_messages())
+        else:
+            return 'Bad request', 400
 
-            # N.B. cannot process pages declaratively via zip(items, range(…))
-            # due to notmuch.errors.NotInitializedError being raised after first StopIteration
+        # N.B. cannot process pages declaratively via zip(items, range(…))
+        # due to notmuch.errors.NotInitializedError being raised after first StopIteration
 
-            for _ in range((page - 1) * per_page):
-                # before current page
-                try: t = next(items)
-                except StopIteration:
-                    items = iter([]) # to prevent NotInitializedError
-                    break
+        for _ in range((page - 1) * per_page):
+            # before current page
+            try: t = next(items)
+            except StopIteration:
+                items = iter([]) # to prevent NotInitializedError
+                break
 
-                count += 1
+            count += 1
 
-                thread_tags = list(t.get_tags())
-                unread = int('unread' in thread_tags)
-                for tag in thread_tags:
-                    tags[tag][0] += unread
-                    tags[tag][1] += 1
+            thread_tags = list(t.get_tags())
+            unread = int('unread' in thread_tags)
+            for tag in thread_tags:
+                tags[tag][0] += unread
+                tags[tag][1] += 1
 
-            current = []
-            for _ in range(per_page):
-                # current page
-                try: t = next(items)
-                except StopIteration:
-                    items = iter([]) # to prevent NotInitializedError
-                    break
+        current = []
+        for _ in range(per_page):
+            # current page
+            try: t = next(items)
+            except StopIteration:
+                items = iter([]) # to prevent NotInitializedError
+                break
 
-                count += 1
+            count += 1
 
-                thread_tags = list(t.get_tags())
-                unread = int('unread' in thread_tags)
-                for tag in thread_tags:
-                    tags[tag][0] += unread
-                    tags[tag][1] += 1
+            thread_tags = list(t.get_tags())
+            unread = int('unread' in thread_tags)
+            for tag in thread_tags:
+                tags[tag][0] += unread
+                tags[tag][1] += 1
 
-                current.append(t)
+            current.append(t)
 
-            while True:
-                # after current page
-                try: t = next(items)
-                except StopIteration:
-                    break
+        while True:
+            # after current page
+            try: t = next(items)
+            except StopIteration:
+                break
 
-                count += 1
+            count += 1
 
-                thread_tags = list(t.get_tags())
-                unread = int('unread' in thread_tags)
-                for tag in thread_tags:
-                    tags[tag][0] += unread
-                    tags[tag][1] += 1
+            thread_tags = list(t.get_tags())
+            unread = int('unread' in thread_tags)
+            for tag in thread_tags:
+                tags[tag][0] += unread
+                tags[tag][1] += 1
 
-            del items
-            if what == 'threads':
-                items = [thread_to_json(t) for t in current]
-            if what == 'messages':
-                items = [message_to_json(t, skip_content=True) for t in current]
+        del items
+        if what == 'threads':
+            items = [thread_to_json(t) for t in current]
+        if what == 'messages':
+            items = [message_to_json(t, skip_content=True) for t in current]
 
-            return dict(
-                pages = count // per_page + 1,
-                tags = [
-                    dict(name=name, unread=unread, total=total)
-                    for name, (unread, total) in sorted(tags.items())
-                ],
-                items = items,
-            )
+        return dict(
+            pages = count // per_page + 1,
+            tags = [
+                dict(name=name, unread=unread, total=total)
+                for name, (unread, total) in sorted(tags.items())
+            ],
+            items = items,
+        )
 
     @app.route("/api/thread/<string:query>") # usually thread:012abcdef or mid:20200102@example.com
     def thread(query):
-            query = notmuch.Query(get_db(), query)
-            query.set_sort(notmuch.Query.SORT.OLDEST_FIRST)
-            thread = query.search_messages()
-            messages = [message_to_json(m) for m in thread]
-            if not messages:
-                return 'Not found', 404
-            return jsonify(messages)
+        query = notmuch.Query(get_db(), query)
+        query.set_sort(notmuch.Query.SORT.OLDEST_FIRST)
+        thread = query.search_messages()
+        messages = [message_to_json(m) for m in thread]
+        if not messages:
+            return 'Not found', 404
+        return jsonify(messages)
 
 
     @app.route("/api/attachment/<string:message_id>/<int:num>/<string:filename>")
