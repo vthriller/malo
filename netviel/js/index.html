@@ -480,6 +480,7 @@ Vue.component('search', {
 		},
 		reload: function() {
 			this.results = null;
+			this.cursor = null;
 			if(!this.query) {
 				return;
 			}
