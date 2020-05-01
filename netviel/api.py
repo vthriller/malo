@@ -334,7 +334,7 @@ def message_to_json(message, skip_content=False):
         "content": content if not skip_content else None,
         "content_type": content_type if not skip_content else None,
         "attachments": attachments if not skip_content else None,
-        "message_id": message.get_message_id(),
+        "id": message.get_message_id(),
         "tags": list(message.get_tags()),
     }
 

@@ -253,14 +253,14 @@ kbd {
 <script src="vue-router-3.1.6.js"></script>
 <script>
 Vue.component('message', {
-	props: 'time_raw subject from to cc bcc content_type content attachments message_id tags'.split(' '),
+	props: 'time_raw subject from to cc bcc content_type content attachments id tags'.split(' '),
 	data: function() {
 		return {
 			folded: this.tags.indexOf('unread') == -1,
 		}
 	},
 	watch: {
-		message_id: function(to, from) {
+		id: function(to, from) {
 			// thanks, VDOM :|
 			this.folded = false;
 		},
@@ -284,7 +284,7 @@ Vue.component('message', {
 			let action = this.unread ? 'remove' : 'add';
 
 			let self = this;
-			fetch(`/api/message/${this.message_id}/tag/unread/${action}`)
+			fetch(`/api/message/${this.id}/tag/unread/${action}`)
 			.then((resp) => {
 				if(!resp.ok)
 					throw new Error(resp.statusText);
@@ -318,7 +318,7 @@ Vue.component('message', {
 					<div class="tags">
 						<span v-for="t in tags" v-if="t != 'unread'">{{ t }}</span>
 					</div>
-					<span class="raw"><a :href="\`/api/message/\${message_id}/raw\`">raw</a></span>
+					<span class="raw"><a :href="\`/api/message/\${id}/raw\`">raw</a></span>
 					<span class="subject">{{subject}}</span>
 					<template v-if="from">
 						<br>
@@ -341,11 +341,11 @@ Vue.component('message', {
 			<div v-if="!folded" class="attachments">
 				<a
 					v-for="(att, idx) in attachments"
-					:href="\`/api/attachment/\${message_id}/\${idx}/\${encodeURIComponent(att.filename)}\`"
+					:href="\`/api/attachment/\${id}/\${idx}/\${encodeURIComponent(att.filename)}\`"
 					v-if="att.filename"
 					:title="att.filename"
 					>
-					<img v-if="att.content_type.startsWith('image/')" :src="\`/api/attachment/\${message_id}/\${idx}/\${encodeURIComponent(att.filename)}\`">
+					<img v-if="att.content_type.startsWith('image/')" :src="\`/api/attachment/\${id}/\${idx}/\${encodeURIComponent(att.filename)}\`">
 					&#x1F4CE;&nbsp;{{ att.filename }}
 				</a>
 			</div>
@@ -510,7 +510,7 @@ Vue.component('search', {
 				let id = thread_query.replace(/^mid:/, '');
 
 				for(let m of this.results.messages) {
-					if(m.message_id == id) {
+					if(m.id == id) {
 						m.tags = tags;
 						return;
 					}
@@ -610,7 +610,7 @@ Vue.component('search', {
 				if(this.what == 'threads')
 					t = 'thread:' + this.results.threads[this.cursor].id;
 				if(this.what == 'messages')
-					t = 'mid:' + this.results.messages[this.cursor].message_id;
+					t = 'mid:' + this.results.messages[this.cursor].id;
 				this.$router.push({
 					name: 'thread',
 					query: {
@@ -712,11 +712,11 @@ Vue.component('search', {
 						v-for="res, idx in results.messages"
 						:key="res.id"
 						:class="{
-							highlight: 'mid:' + res.message_id == highlight,
+							highlight: 'mid:' + res.id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
 							cursor: idx == cursor,
 						}"
-						@click="cursor = idx; goto_thread('mid:' + res.message_id)">
+						@click="cursor = idx; goto_thread('mid:' + res.id)">
 						<td :class="{ 'unread-marker': true }">•</td>
 						<td>{{ res.from_name_addr[0] || res.from_name_addr[1] }}</td>
 						<td class="subject">
