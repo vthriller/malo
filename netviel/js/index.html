@@ -664,6 +664,10 @@ let NetViel = Vue.component('netviel', {
 
 			if(document.activeElement == this.$refs.query) {
 				// input mode
+				if(key == 'escape') {
+					document.activeElement.blur();
+					ev.preventDefault();
+				}
 				return;
 			}
 
