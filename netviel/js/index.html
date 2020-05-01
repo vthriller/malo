@@ -569,11 +569,11 @@ Vue.component('search', {
 			this.$emit('query-append', ` ${op} tag:${t}`);
 		},
 		onkeypress: function(ev, key) {
-			if(key == 'arrowdown' || key == 'arrowup') {
-				if(!this.results)
-					// nothing to navigate
-					return;
+			if(!this.results)
+				// nothing to navigate
+				return;
 
+			if(key == 'arrowdown' || key == 'arrowup') {
 				var rows, next;
 				if(this.what == 'threads') {
 					rows = this.results.threads;
@@ -596,10 +596,6 @@ Vue.component('search', {
 				return;
 			}
 			if(key == 'enter') {
-				if(!this.results)
-					// nothing to navigate
-					return;
-
 				if(this.cursor == null)
 					// nothing is selected
 					return;
