@@ -11,6 +11,7 @@ Malo is a work in progress.
 Malo is not currently present in PyPI, so you'll need to clone this repository first.
 
 ```
+make # this will fetch js dependencies; no npm required!
 python3 -m pip install . --user
 ```
 
