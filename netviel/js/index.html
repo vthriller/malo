@@ -664,7 +664,7 @@ Vue.component('search', {
 					</span>
 				</div>
 
-				<table v-if="results && what == 'threads'">
+				<table v-if="results">
 					<tr
 						v-for="res, idx in results.items"
 						:key="res.id"
@@ -674,8 +674,12 @@ Vue.component('search', {
 							cursor: idx == cursor,
 						 }"
 						@click="cursor = idx; goto_thread(thread_prefix + res.id)">
+
 						<td :class="{ 'unread-marker': true }">•</td>
-						<td>{{ res.authors }}</td>
+
+						<td v-if="what == 'threads'">{{ res.authors }}</td>
+						<td v-if="what == 'messages'">{{ res.from_name_addr[0] || res.from_name_addr[1] }}</td>
+
 						<td class="subject">
 							<span
 								v-for="tag in res.tags"
@@ -684,33 +688,15 @@ Vue.component('search', {
 								>{{ tag }}</span>
 							{{ res.subject }}
 						</td>
-						<td>{{ res.matched_messages }}/{{ res.total_messages }}</td>
+
+						<td v-if="what == 'threads'">{{ res.matched_messages }}/{{ res.total_messages }}</td>
+
+						<template v-if="what == 'threads'">
 						<td v-if="format_time(res.oldest_date) != format_time(res.newest_date)">{{ format_time(res.oldest_date) }} – {{ format_time(res.newest_date) }}</td>
 						<td v-else>{{ format_time(res.oldest_date) }}</td>
-					</tr>
-				</table>
+						</template>
 
-				<table v-if="results && what == 'messages'">
-					<tr
-						v-for="res, idx in results.items"
-						:key="res.id"
-						:class="{
-							highlight: thread_prefix + res.id == highlight,
-							unread: res.tags.indexOf('unread') != -1,
-							cursor: idx == cursor,
-						}"
-						@click="cursor = idx; goto_thread(thread_prefix + res.id)">
-						<td :class="{ 'unread-marker': true }">•</td>
-						<td>{{ res.from_name_addr[0] || res.from_name_addr[1] }}</td>
-						<td class="subject">
-							<span
-								v-for="tag in res.tags"
-								v-if="['unread', 'attachment', 'replied', 'new'].indexOf(tag) == -1"
-								@click.stop="append_tag(tag, $event)"
-								>{{ tag }}</span>
-							{{ res.subject }}
-						</td>
-						<td>{{ format_time(res.time) }}</td>
+						<td v-if="what == 'messages'">{{ format_time(res.time) }}</td>
 					</tr>
 				</table>
 			</div>
