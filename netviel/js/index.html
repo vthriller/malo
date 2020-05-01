@@ -52,6 +52,9 @@ tr.highlight,
 tr.highlight:nth-child(2n+1) {
 	background-color: #fe5;
 }
+tr.cursor {
+	border: 2px dotted #555;
+}
 td {
 	vertical-align: top;
 }
@@ -414,6 +417,7 @@ Vue.component('search', {
 	data: function() {
 		return {
 			results: null,
+			cursor: null,
 		};
 	},
 	watch: {
@@ -541,6 +545,41 @@ Vue.component('search', {
 			let op = event.ctrlKey ? 'not' : 'and';
 			this.$emit('query-append', ` ${op} tag:${t}`);
 		},
+		onkeypress: function(ev, key) {
+			if(key == 'arrowdown' || key == 'arrowup') {
+				if(!this.results)
+					// nothing to navigate
+					return;
+
+				var rows, current, next;
+				if(this.what == 'threads') {
+					rows = this.results.threads;
+					current = rows.findIndex((i) => i.thread_id == this.cursor);
+				}
+				if(this.what == 'messages') {
+					rows = this.results.messages;
+					current = rows.findIndex((i) => i.message_id == this.cursor);
+				}
+				if(current == -1) {
+					// no selected element, select first or last depending on the key
+					next = key == 'arrowdown' ? 0 : rows.length-1;
+				} else {
+					next = current + (key == 'arrowdown' ? 1 : -1);
+					// wrap around
+					if(next < 0) next = rows.length-1;
+					if(next > rows.length-1) next = 0;
+				}
+				if(this.what == 'threads') {
+					this.cursor = rows[next].thread_id;
+				}
+				if(this.what == 'messages') {
+					this.cursor = rows[next].message_id;
+				}
+
+				ev.preventDefault();
+				return;
+			}
+		},
 	},
 	template: `
 			<div class="results">
@@ -573,6 +612,7 @@ Vue.component('search', {
 						:class="{
 							highlight: 'thread:' + res.thread_id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
+							cursor: res.thread_id == cursor,
 						 }"
 						@click="goto_thread(res.thread_id)">
 						<td :class="{ 'unread-marker': true }">•</td>
@@ -598,6 +638,7 @@ Vue.component('search', {
 						:class="{
 							highlight: 'mid:' + res.message_id == highlight,
 							unread: res.tags.indexOf('unread') != -1,
+							cursor: res.message_id == cursor,
 						}"
 						@click="goto_message(res.message_id)">
 						<td :class="{ 'unread-marker': true }">•</td>
@@ -682,6 +723,8 @@ let NetViel = Vue.component('netviel', {
 				ev.preventDefault();
 				return;
 			}
+
+			this.$refs.search.onkeypress(ev, key);
 		},
 	},
 	template: `
