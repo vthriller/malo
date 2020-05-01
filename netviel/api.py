@@ -192,14 +192,19 @@ def create_app():
                     tags[tag][0] += unread
                     tags[tag][1] += 1
 
+            del items
+            if what == 'threads':
+                items = [thread_to_json(t) for t in current]
+            if what == 'messages':
+                items = [message_to_json(t, skip_content=True) for t in current]
+
             return dict(
                 pages = count // per_page + 1,
                 tags = [
                     dict(name=name, unread=unread, total=total)
                     for name, (unread, total) in sorted(tags.items())
                 ],
-                threads = [thread_to_json(t) for t in current] if what == 'threads' else None,
-                messages = [message_to_json(t, skip_content=True) for t in current] if what == 'messages' else None,
+                items = items,
             )
 
     class Thread(Resource):
