@@ -631,7 +631,7 @@ Vue.component('search', {
 							unread: res.tags.indexOf('unread') != -1,
 							cursor: idx == cursor,
 						 }"
-						@click="goto_thread(res.thread_id)">
+						@click="cursor = idx; goto_thread(res.thread_id)">
 						<td :class="{ 'unread-marker': true }">•</td>
 						<td>{{ res.authors }}</td>
 						<td class="subject">
@@ -657,7 +657,7 @@ Vue.component('search', {
 							unread: res.tags.indexOf('unread') != -1,
 							cursor: idx == cursor,
 						}"
-						@click="goto_message(res.message_id)">
+						@click="cursor = idx; goto_message(res.message_id)">
 						<td :class="{ 'unread-marker': true }">•</td>
 						<td>{{ res.from_name_addr[0] || res.from_name_addr[1] }}</td>
 						<td class="subject">
