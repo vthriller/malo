@@ -14,7 +14,6 @@ import bleach
 import notmuch
 from flask import Flask, current_app, g, send_file, send_from_directory, request, jsonify
 from flask_cors import CORS
-from flask_restful import Api, Resource
 
 ALLOWED_TAGS = [
     "a",
@@ -106,8 +105,6 @@ def create_app():
 
     CORS(app)
 
-    api = Api(app)
-
     @app.route("/")
     def send_index():
         return send_from_directory(app.static_folder, "index.html")
@@ -124,8 +121,8 @@ def create_app():
 
     app.teardown_appcontext(close_db)
 
-    class Query(Resource):
-        def get(self):
+    @app.route("/api/query")
+    def query():
             query_string = request.args['q']
             page = int(request.args.get('page', '1'))
             what = request.args.get('what', 'threads')
@@ -207,18 +204,16 @@ def create_app():
                 items = items,
             )
 
-    class Thread(Resource):
-        def get(self, query):
+    @app.route("/api/thread/<string:query>") # usually thread:012abcdef or mid:20200102@example.com
+    def thread(query):
             query = notmuch.Query(get_db(), query)
             query.set_sort(notmuch.Query.SORT.OLDEST_FIRST)
             thread = query.search_messages()
             messages = [message_to_json(m) for m in thread]
             if not messages:
                 return 'Not found', 404
-            return messages
+            return jsonify(messages)
 
-    api.add_resource(Query, "/api/query")
-    api.add_resource(Thread, "/api/thread/<string:query>") # usually thread:012abcdef or mid:20200102@example.com
 
     @app.route("/api/attachment/<string:message_id>/<int:num>/<string:filename>")
     def download_attachment(message_id, num, filename):
