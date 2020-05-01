@@ -493,9 +493,8 @@ Vue.component('search', {
 		update_tags: function(thread_query, tags) {
 			if(!this.results) return;
 
-			if(this.what == 'threads') {
 				if(!thread_query.startsWith(this.thread_prefix)) {
-					// trying to update non-thread in thread search
+					// trying to update non-thread in thread search, or non-message in message search
 					// this is fine: you can open single message and switch to thread search
 					// TODO update flags through subscription to a stream of updates that come directly from the server
 					return;
@@ -508,22 +507,6 @@ Vue.component('search', {
 						return;
 					}
 				}
-			}
-
-			if(this.what == 'messages') {
-				if(!thread_query.startsWith(this.thread_prefix)) {
-					// trying to update non-message in message search
-					return;
-				}
-				let id = thread_query.substring(this.thread_prefix.length);
-
-				for(let m of this.results.items) {
-					if(m.id == id) {
-						m.tags = tags;
-						return;
-					}
-				}
-			}
 
 			//console.error('trying to update tags in unknown mode');
 		},
@@ -589,12 +572,7 @@ Vue.component('search', {
 
 			if(key == 'arrowdown' || key == 'arrowup') {
 				var rows, next;
-				if(this.what == 'threads') {
-					rows = this.results.items;
-				}
-				if(this.what == 'messages') {
-					rows = this.results.items;
-				}
+				rows = this.results.items;
 				if(this.cursor == null) {
 					// no selected element, select first or last depending on the key
 					next = key == 'arrowdown' ? 0 : rows.length-1;
@@ -615,10 +593,7 @@ Vue.component('search', {
 					return;
 
 				var t;
-				if(this.what == 'threads')
-					t = this.thread_prefix + this.results.items[this.cursor].id;
-				if(this.what == 'messages')
-					t = this.thread_prefix + this.results.items[this.cursor].id;
+				t = this.thread_prefix + this.results.items[this.cursor].id;
 				this.$router.push({
 					name: 'thread',
 					query: {
@@ -665,7 +640,7 @@ Vue.component('search', {
 	template: `
 			<div class="results">
 				<div class="status" v-if="!results">Loading...</div>
-				<div class="status" v-if="results && !((what == 'threads' && results.items.length) || (what == 'messages' && results.items.length))">No messages found</div>
+				<div class="status" v-if="results && !results.items.length">No messages found</div>
 
 				<div class="pager" v-if="results && results.pages > 1">
 					<span
